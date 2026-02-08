@@ -61,6 +61,67 @@
             border-color: rgba(0,0,0,0.3);
         }
         
+        /* Page Load Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .animate-header {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+        
+        .animate-section-1 {
+            animation: fadeInUp 0.8s ease-out 0.1s forwards;
+            opacity: 0;
+        }
+        
+        .animate-section-2 {
+            animation: fadeInUp 0.8s ease-out 0.2s forwards;
+            opacity: 0;
+        }
+        
+        .animate-section-3 {
+            animation: fadeInUp 0.8s ease-out 0.3s forwards;
+            opacity: 0;
+        }
+        
+        .animate-card {
+            animation: fadeInUp 0.6s ease-out forwards;
+            opacity: 0;
+        }
+        
+        .animate-footer {
+            animation: fadeIn 0.8s ease-out 0.5s forwards;
+            opacity: 0;
+        }
+        
         /* Alert Overlay */
         #alert-overlay {
             display: none;
@@ -104,7 +165,7 @@
 
     <!-- HEADER -->
     <header
-        class="sticky top-0 z-50 px-12 py-6 glass-header flex items-center justify-between border-b border-black/10">
+        class="sticky top-0 z-50 px-12 py-6 glass-header flex items-center justify-between border-b border-black/10 animate-header">
         <div class="flex items-center gap-4">
             <div class="w-10 h-10 bg-black flex items-center justify-center text-white rounded-xl">
                 <span class="material-symbols-outlined text-2xl">analytics</span>
@@ -134,7 +195,7 @@
     <main class="max-w-[1600px] mx-auto px-12 py-16 space-y-16">
 
         <!-- CRITICAL SECTION -->
-        <section class="status-section bg-[var(--muted-red)] p-12 border border-black/5">
+        <section class="status-section bg-[var(--muted-red)] p-12 border border-black/5 animate-section-1">
             <div class="flex items-end justify-between mb-10">
                 <div class="flex items-center gap-3">
                     <span class="material-symbols-outlined text-3xl font-bold">emergency_home</span>
@@ -180,7 +241,7 @@
         </section>
 
         <!-- MODERATE SECTION -->
-        <section class="status-section bg-[var(--muted-amber)] p-12 border border-black/5">
+        <section class="status-section bg-[var(--muted-amber)] p-12 border border-black/5 animate-section-2">
             <div class="flex items-end justify-between mb-10">
                 <div class="flex items-center gap-3">
                     <span class="material-symbols-outlined text-3xl font-bold">warning</span>
@@ -224,7 +285,7 @@
         </section>
 
         <!-- STABLE SECTION -->
-        <section class="status-section bg-[var(--muted-green)] p-12 border border-black/5">
+        <section class="status-section bg-[var(--muted-green)] p-12 border border-black/5 animate-section-3">
             <div class="flex items-end justify-between mb-10">
                 <div class="flex items-center gap-3">
                     <span class="material-symbols-outlined text-3xl font-bold">shield</span>
@@ -273,7 +334,7 @@
     </main>
 
     <!-- FOOTER -->
-    <footer class="p-12 flex justify-center">
+    <footer class="p-12 flex justify-center animate-footer">
         <div
             class="bg-black text-white px-8 py-4 rounded-xl flex items-center gap-4 text-[10px] font-bold tracking-[0.2em] uppercase shadow-xl">
             <span class="material-symbols-outlined text-lg">verified_user</span>
@@ -285,6 +346,15 @@
         const socket = io();
         let criticalList = [];
         let alarmInterval;
+
+        // Animate patient cards on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.square-card, .add-new-card');
+            cards.forEach((card, index) => {
+                card.classList.add('animate-card');
+                card.style.animationDelay = `${0.4 + (index * 0.08)}s`;
+            });
+        });
 
         // Search functionality
         function searchPatient() {
