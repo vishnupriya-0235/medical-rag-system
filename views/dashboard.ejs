@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Medical RAG System</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+
+<body>
+
+<nav class="navbar">
+    <h2>🏥 Observation Monitor</h2>
+
+    <div class="nav-right">
+        <input 
+            type="text" 
+            id="searchInput" 
+            onkeyup="searchPatient()" 
+            placeholder="🔍 Search patient..."
+        >
+        <a href="/add-patient" class="btn-add">➕ Add Patient</a>
+        <a href="/logout" class="logout-link">Logout</a>
+    </div>
+</nav>
+
+<!-- ALERT SYSTEM -->
+<div id="alert-overlay">
+    <h1 class="alert-title">⚠️ CRITICAL ALERT</h1>
+    <h2 id="alert-count"></h2>
+    <div id="alert-list"></div>
+    <button class="ack-button" onclick="acknowledgeAlerts()">ACKNOWLEDGED</button>
+</div>
+
+<div class="container">
+
+    <!-- CRITICAL PATIENTS -->
+    <h2 class="section-title red">🚨 CRITICAL CONDITION</h2>
+    <div class="grid">
+        <% critical.forEach(p=>{ %>
+        <a href="/patient/<%=p._id%>" class="card red-card">
+            <div class="avatar">🏥</div>
+            <h3><%=p.name%></h3>
+            <p><strong><%=p.problem%></strong></p>
+            <p style="font-size: 12px; margin-top: 8px; color: #999;">Click for details</p>
+        </a>
+        <% }) %>
+        <% if(critical.length === 0) { %>
+        <div style="grid-column: 1 / -1; text-align: center; padding: 40px 20px; color: var(--text-secondary);">
+            <p style="font-size: 18px;">✅ No critical patients at this time</p>
+        </div>
+        <% } %>
+    </div>
+
+    <!-- MODERATE PATIENTS -->
+    <h2 class="section-title amber">⚠️ MODERATE CONDITION</h2>
+    <div class="grid">
+        <% others.filter(p=>p.severity==='Amber').forEach(p=>{ %>
+        <a href="/patient/<%=p._id%>" class="card amber-card">
+            <div class="avatar">👤</div>
+            <h3><%=p.name%></h3>
+            <p><strong><%=p.problem%></strong></p>
+            <p style="font-size: 12px; margin-top: 8px; color: #999;">Click for details</p>
+        </a>
+        <% }) %>
+        <% if(others.filter(p=>p.severity==='Amber').length === 0) { %>
+        <div style="grid-column: 1 / -1; text-align: center; padding: 40px 20px; color: var(--text-secondary);">
+            <p style="font-size: 18px;">No moderate cases</p>
+        </div>
+        <% } %>
+    </div>
+
+    <!-- STABLE PATIENTS -->
+    <h2 class="section-title green">✅ STABLE CONDITION</h2>
+    <div class="grid">
+        <% others.filter(p=>p.severity==='Green').forEach(p=>{ %>
+        <a href="/patient/<%=p._id%>" class="card green-card">
+            <div class="avatar">👤</div>
+            <h3><%=p.name%></h3>
+            <p><strong><%=p.problem%></strong></p>
+            <p style="font-size: 12px; margin-top: 8px; color: #999;">Click for details</p>
+        </a>
+        <% }) %>
+        <% if(others.filter(p=>p.severity==='Green').length === 0) { %>
+        <div style="grid-column: 1 / -1; text-align: center; padding: 40px 20px; color: var(--text-secondary);">
+            <p style="font-size: 18px;">No stable patients</p>
+        </div>
+        <% } %>
+    </div>
+
+</div>
+
+<script>
+const socket = io();
+let criticalList = [];
+let alarmInterval;
+
+// Search functionality
+function searchPatient() {
+    const val = document.getElementById('searchInput').value.toLowerCase();
+    document.querySelectorAll('.card').forEach(c => {
+        c.style.display = c.innerText.toLowerCase().includes(val) ? "" : "none";
+    });
+}
+
+// Alert system
+socket.on('emergency_alert', data => {
+    if (!criticalList.find(p => p.id === data.id)) {
+        criticalList.push(data);
+        document.getElementById('alert-overlay').style.display = 'flex';
+        document.getElementById('alert-count').innerText = `${criticalList.length} CRITICAL PATIENT(S)`;
+        document.getElementById('alert-list').innerHTML = 
+            criticalList.map(p => `<p><strong>${p.name}</strong> - HR: ${p.hr} | O2: ${p.o2}%</p>`).join('');
+        if (!alarmInterval) {
+            alarmInterval = setInterval(playAlarm, 1000);
+        }
+    }
+});
+
+function acknowledgeAlerts() {
+    criticalList = [];
+    clearInterval(alarmInterval);
+    alarmInterval = null;
+    document.getElementById('alert-overlay').style.display = 'none';
+}
+
+function playAlarm() {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.frequency.value = 880;
+    gain.gain.value = 0.05;
+    osc.start();
+    osc.stop(ctx.currentTime + 0.3);
+}
+
+// Auto-update dashboard
+socket.on('update_data', () => location.reload());
+</script>
+
+</body>
+</html>

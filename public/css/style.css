@@ -1,0 +1,732 @@
+/* ============================================
+   MEDICAL RAG SYSTEM - PREMIUM PROFESSIONAL UI
+   ============================================ */
+
+:root {
+    /* Premium Medical Colors */
+    --primary: #0052cc;
+    --primary-light: #0066ff;
+    --primary-dark: #003d99;
+    --critical: #dc3545;
+    --moderate: #ff9800;
+    --stable: #10b981;
+    --dark-bg: #f5f7fa;
+    --text-primary: #1f2937;
+    --text-secondary: #6b7280;
+    --text-light: #9ca3af;
+    --border-color: #e5e7eb;
+    --white: #ffffff;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.12);
+    --shadow-lg: 0 10px 30px rgba(0,0,0,0.15);
+    --shadow-xl: 0 15px 40px rgba(0,0,0,0.2);
+    --radius: 10px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* ========== GLOBAL & BODY ========== */
+html, body {
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+    background-color: var(--dark-bg);
+    color: var(--text-primary);
+    line-height: 1.6;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+button {
+    font-family: inherit;
+    cursor: pointer;
+}
+
+/* ========== LOGIN PAGE ========== */
+.login-body {
+    background: linear-gradient(135deg, rgba(0, 82, 204, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%), 
+                url('/images/hospital-background.jpg') no-repeat center center fixed;
+    background-size: cover;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    backdrop-filter: blur(2px);
+}
+
+.login-card {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 52px;
+    border-radius: 20px;
+    box-shadow: var(--shadow-xl);
+    width: 100%;
+    max-width: 450px;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.login-card h2 {
+    font-size: 36px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-align: center;
+}
+
+.login-card p {
+    text-align: center;
+    color: var(--text-secondary);
+    margin-bottom: 40px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.login-group {
+    margin-bottom: 24px;
+}
+
+.login-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: var(--text-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.login-group input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius);
+    font-size: 15px;
+    transition: all 0.3s ease;
+    background: #fafbfc;
+}
+
+.login-group input:focus {
+    outline: none;
+    border-color: var(--primary);
+    background: var(--white);
+    box-shadow: 0 0 0 4px rgba(0, 82, 204, 0.08);
+}
+
+.login-group input::placeholder {
+    color: var(--text-light);
+}
+
+.login-btn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    font-size: 16px;
+    font-weight: 700;
+    transition: all 0.3s ease;
+    margin-top: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 15px rgba(0, 82, 204, 0.3);
+}
+
+.login-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(0, 82, 204, 0.4);
+}
+
+.login-btn:active {
+    transform: translateY(0);
+}
+
+/* ========== DASHBOARD NAVBAR ========== */
+.navbar {
+    background: var(--white);
+    padding: 16px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: var(--shadow-sm);
+    border-bottom: 2px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.95);
+}
+
+.navbar h2 {
+    font-size: 26px;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 0;
+}
+
+.nav-right {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+#searchInput {
+    padding: 10px 18px;
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius);
+    width: 280px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    background: #fafbfc;
+}
+
+#searchInput:focus {
+    outline: none;
+    border-color: var(--primary);
+    background: var(--white);
+    box-shadow: 0 0 0 3px rgba(0, 82, 204, 0.08);
+}
+
+#searchInput::placeholder {
+    color: var(--text-light);
+}
+
+.btn-add, .logout-link {
+    padding: 10px 24px;
+    border-radius: var(--radius);
+    font-size: 13px;
+    font-weight: 700;
+    transition: all 0.3s ease;
+    border: none;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+}
+
+.btn-add {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(0, 82, 204, 0.2);
+}
+
+.btn-add:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(0, 82, 204, 0.3);
+}
+
+.logout-link {
+    color: var(--text-secondary);
+    border: 2px solid var(--border-color);
+    background: var(--white);
+}
+
+.logout-link:hover {
+    color: var(--critical);
+    border-color: var(--critical);
+    background: rgba(220, 53, 69, 0.05);
+    transform: translateY(-1px);
+}
+
+/* ========== DASHBOARD CONTAINER & SECTIONS ========== */
+.container {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+.section-title {
+    font-size: 22px;
+    font-weight: 800;
+    margin: 50px 0 25px 0;
+    padding-bottom: 16px;
+    border-bottom: 4px solid;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.section-title.red { 
+    color: var(--critical); 
+    border-color: var(--critical);
+}
+
+.section-title.amber { 
+    color: var(--moderate); 
+    border-color: var(--moderate);
+}
+
+.section-title.green { 
+    color: var(--stable); 
+    border-color: var(--stable);
+}
+
+/* ========== CARDS & GRID ========== */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 24px;
+    margin-bottom: 40px;
+}
+
+.card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 28px;
+    border-left: 6px solid;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-md);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    border-top: 1px solid var(--border-color);
+    position: relative;
+    overflow: hidden;
+}
+
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+}
+
+.card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-8px);
+}
+
+.red-card { 
+    border-left-color: var(--critical);
+}
+
+.red-card:hover {
+    border-top-color: var(--critical);
+}
+
+.amber-card { 
+    border-left-color: var(--moderate);
+}
+
+.amber-card:hover {
+    border-top-color: var(--moderate);
+}
+
+.green-card { 
+    border-left-color: var(--stable);
+}
+
+.green-card:hover {
+    border-top-color: var(--stable);
+}
+
+.avatar {
+    font-size: 48px;
+    margin-bottom: 16px;
+    display: block;
+}
+
+.card h3 {
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 10px;
+    color: var(--text-primary);
+}
+
+.card p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+/* ========== ADD PATIENT PAGE ========== */
+.add-patient-body {
+    background: linear-gradient(135deg, rgba(0, 82, 204, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%), 
+                url('/images/hospital-background.jpg') no-repeat center center fixed;
+    background-size: cover;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    backdrop-filter: blur(2px);
+}
+
+.form-card {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 52px;
+    border-radius: 20px;
+    box-shadow: var(--shadow-xl);
+    width: 100%;
+    max-width: 550px;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.form-card h2 {
+    font-size: 32px;
+    font-weight: 800;
+    margin-bottom: 40px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-align: center;
+}
+
+.form-card label {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    margin-top: 20px;
+    color: var(--text-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.form-card input,
+.form-card select {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius);
+    font-size: 15px;
+    transition: all 0.3s ease;
+    background: #fafbfc;
+    color: var(--text-primary);
+}
+
+.form-card input:focus,
+.form-card select:focus {
+    outline: none;
+    border-color: var(--primary);
+    background: var(--white);
+    box-shadow: 0 0 0 4px rgba(0, 82, 204, 0.08);
+}
+
+.form-card select {
+    cursor: pointer;
+    appearance: none;
+    padding-right: 40px;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230052cc' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    background-size: 18px;
+    padding-right: 40px;
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 32px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 15px rgba(0, 82, 204, 0.3);
+}
+
+.submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(0, 82, 204, 0.4);
+}
+
+/* ========== PATIENT DETAIL PAGE ========== */
+.patient-detail-body {
+    background: linear-gradient(135deg, rgba(0, 82, 204, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%), 
+                url('/images/hospital-background.jpg') no-repeat center center fixed;
+    background-size: cover;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    backdrop-filter: blur(2px);
+}
+
+.detail-card {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 20px;
+    box-shadow: var(--shadow-xl);
+    width: 100%;
+    max-width: 850px;
+    padding: 60px;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.detail-card h1 {
+    font-size: 56px;
+    font-weight: 900;
+    margin-bottom: 24px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -1px;
+}
+
+.detail-card h3 {
+    font-size: 16px;
+    font-weight: 800;
+    margin-bottom: 48px;
+    padding: 16px 28px;
+    border-radius: var(--radius);
+    display: inline-block;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.vitals {
+    background: linear-gradient(135deg, rgba(249, 250, 251, 0.8) 0%, rgba(243, 244, 246, 0.8) 100%);
+    padding: 40px;
+    border-radius: 16px;
+    margin-bottom: 40px;
+    border: 2px solid var(--border-color);
+    backdrop-filter: blur(5px);
+}
+
+.vitals p {
+    font-size: 18px;
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 18px;
+    border-bottom: 2px solid var(--border-color);
+    font-weight: 700;
+}
+
+.vitals p:last-child {
+    margin-bottom: 0;
+    border-bottom: none;
+}
+
+.vitals p span:first-child {
+    color: var(--text-secondary);
+    font-size: 17px;
+}
+
+.vitals p strong {
+    color: var(--primary);
+    font-weight: 900;
+    font-size: 24px;
+}
+
+.delete-btn, .back-btn {
+    padding: 16px 36px;
+    border-radius: var(--radius);
+    font-size: 14px;
+    font-weight: 800;
+    border: none;
+    transition: all 0.3s ease;
+    display: inline-block;
+    margin-right: 16px;
+    margin-top: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+}
+
+.delete-btn {
+    background: linear-gradient(135deg, var(--critical) 0%, #c41e3a 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.2);
+}
+
+.delete-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(220, 53, 69, 0.4);
+}
+
+.back-btn {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(0, 82, 204, 0.2);
+}
+
+.back-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0, 82, 204, 0.4);
+}
+
+/* ========== ALERT SYSTEM ========== */
+#alert-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(135deg, rgba(220, 53, 69, 0.95) 0%, rgba(196, 30, 58, 0.95) 100%);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 100000;
+    color: white;
+    backdrop-filter: blur(8px);
+    animation: slideIn 0.3s ease;
+}
+
+.alert-title {
+    font-size: 72px;
+    font-weight: 900;
+    margin-bottom: 24px;
+    animation: pulse-alert 1s ease-in-out infinite;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+#alert-count {
+    font-size: 36px;
+    font-weight: 800;
+    margin-bottom: 32px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+#alert-list {
+    font-size: 18px;
+    margin-bottom: 40px;
+    max-height: 300px;
+    overflow-y: auto;
+    text-align: center;
+}
+
+#alert-list p {
+    margin: 12px 0;
+    font-weight: 600;
+    padding: 8px 16px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+}
+
+.ack-button {
+    padding: 16px 48px;
+    background: white;
+    color: var(--critical);
+    border: none;
+    border-radius: var(--radius);
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+}
+
+.ack-button:hover {
+    transform: scale(1.08);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.3);
+}
+
+/* ========== ANIMATIONS ========== */
+@keyframes pulse-alert {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        animation: none;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card {
+    animation: fadeInUp 0.5s ease;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        gap: 16px;
+        padding: 16px 20px;
+    }
+
+    .nav-right {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    #searchInput {
+        width: 100%;
+    }
+
+    .grid {
+        grid-template-columns: 1fr;
+    }
+
+    .login-card, .form-card, .detail-card {
+        padding: 36px 24px;
+    }
+
+    .detail-card {
+        max-width: 100%;
+    }
+
+    .detail-card h1 {
+        font-size: 40px;
+    }
+
+    .vitals {
+        padding: 24px;
+    }
+
+    .vitals p {
+        font-size: 16px;
+    }
+
+    .vitals p strong {
+        font-size: 20px;
+    }
+
+    .alert-title {
+        font-size: 48px;
+    }
+
+    #alert-count {
+        font-size: 24px;
+    }
+}

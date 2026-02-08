@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Details - Medical RAG System</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body class="patient-detail-body">
+
+<div class="detail-card">
+    <h1><%= patient.name %></h1>
+    
+    <h3 style="
+        <% if(patient.severity === 'Red') { %>
+            background: #ffe6e6; color: var(--critical);
+        <% } else if(patient.severity === 'Amber') { %>
+            background: #fff3e0; color: var(--moderate);
+        <% } else { %>
+            background: #e6f5f0; color: var(--stable);
+        <% } %>
+    ">
+        Status: <strong><%= patient.severity %></strong>
+    </h3>
+
+    <!-- Patient Information Section -->
+    <div class="vitals" style="margin-bottom: 20px;">
+        <p style="border-bottom: 2px solid var(--primary); padding-bottom: 12px; margin-bottom: 12px;">
+            <span style="font-weight: 700; color: var(--primary);">📋 PATIENT INFORMATION</span>
+        </p>
+        <p>
+            <span>👤 Age</span>
+            <strong><%= patient.age %> years</strong>
+        </p>
+        <p>
+            <span>🏥 Admission Reason</span>
+            <strong><%= patient.problem %></strong>
+        </p>
+        <p>
+            <span>🏷️ Medical Category</span>
+            <strong>
+                <% 
+                    const categoryMap = {'1': 'Surgery', '2': 'Cardiac', '3': 'General'};
+                    const categoryIcons = {'1': '🏥', '2': '❤️', '3': '🩺'};
+                %>
+                <%= categoryIcons[patient.problemCode] %> <%= categoryMap[patient.problemCode] %>
+            </strong>
+        </p>
+    </div>
+
+    <!-- Vital Signs Section -->
+    <div class="vitals">
+        <p style="border-bottom: 2px solid var(--primary); padding-bottom: 12px; margin-bottom: 12px;">
+            <span style="font-weight: 700; color: var(--primary);">💉 VITAL SIGNS</span>
+        </p>
+        <p>
+            <span>❤️ Heart Rate</span>
+            <strong><%= patient.vitals.heartRate %> bpm</strong>
+        </p>
+        <p>
+            <span>🫁 Respiratory Rate</span>
+            <strong><%= patient.vitals.respiratoryRate %> rpm</strong>
+        </p>
+        <p>
+            <span>🩸 Blood Pressure</span>
+            <strong><%= patient.vitals.systolicBP %>/<%= patient.vitals.diastolicBP %> mmHg</strong>
+        </p>
+        <p>
+            <span>💧 Oxygen Level</span>
+            <strong><%= patient.vitals.oxygen %>%</strong>
+        </p>
+        <p>
+            <span>🌡️ Temperature</span>
+            <strong><%= patient.vitals.temp %>°F</strong>
+        </p>
+    </div>
+
+    <div style="margin-top: 32px; display: flex; gap: 12px; justify-content: center;">
+        <form action="/delete-patient/<%= patient._id %>" method="POST" style="flex: 1;">
+            <button type="submit" class="delete-btn" style="width: 100%;" onclick="return confirm('Are you sure?')">Delete Patient</button>
+        </form>
+        <a href="/dashboard" class="back-btn" style="flex: 1; text-align: center; padding: 12px 24px;">Back to Dashboard</a>
+    </div>
+</div>
+
+</body>
+</html>
