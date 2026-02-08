@@ -194,95 +194,97 @@
     <!-- MAIN CONTENT -->
     <main class="max-w-[1600px] mx-auto px-12 py-12 space-y-8">
 
-        <!-- CRITICAL SECTION -->
-        <section class="status-section bg-[var(--muted-red)] p-8 border border-black/5 animate-section-1">
-            <div class="flex items-end justify-between mb-6">
-                <div class="flex items-center gap-3">
-                    <span class="material-symbols-outlined text-3xl font-bold">emergency_home</span>
-                    <h2 class="text-4xl font-black uppercase tracking-tighter">Critical</h2>
-                </div>
-                <p class="text-sm font-bold opacity-60 uppercase tracking-widest">
-                    <%= critical.length %> ACTIVE CASES
-                </p>
-            </div>
-
-            <% if(critical.length===0) { %>
-                <div class="flex items-center justify-center py-16 bg-white/40 border border-black/5 rounded-xl">
-                    <div class="text-center">
-                        <span class="material-symbols-outlined text-4xl mb-3 opacity-30">check_circle</span>
-                        <p class="text-xl font-black opacity-30 uppercase tracking-tighter">UNIT CLEAR</p>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- CRITICAL SECTION -->
+            <section class="status-section bg-[var(--muted-red)] p-8 border border-black/5 animate-section-1">
+                <div class="flex items-end justify-between mb-6">
+                    <div class="flex items-center gap-3">
+                        <span class="material-symbols-outlined text-3xl font-bold">emergency_home</span>
+                        <h2 class="text-4xl font-black uppercase tracking-tighter">Critical</h2>
                     </div>
+                    <p class="text-sm font-bold opacity-60 uppercase tracking-widest">
+                        <%= critical.length %> ACTIVE CASES
+                    </p>
                 </div>
-                <% } else { %>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                        <% critical.forEach(p=> { %>
-                            <a href="/patient/<%= p._id %>"
-                                class="square-card bg-white p-10 border border-black/5 shadow-sm flex flex-col items-center text-center group cursor-pointer aspect-[3/4] justify-center">
-                                <div
-                                    class="w-20 h-20 bg-black/5 avatar-square flex items-center justify-center mb-8 overflow-hidden">
-                                    <span class="material-symbols-outlined text-4xl text-black/60">person</span>
-                                </div>
-                                <h3 class="text-2xl font-black mb-1 tracking-tight uppercase">
-                                    <%= p.name %>
-                                </h3>
-                                <p class="text-[10px] font-bold tracking-[0.2em] mb-8 text-black/50 uppercase">
-                                    <%= p.problem %>
-                                </p>
-                                <div class="w-12 h-[1px] bg-black/20 mb-8"></div>
-                                <div
-                                    class="flex items-center gap-2 font-black uppercase text-[10px] tracking-[0.2em] group-hover:gap-4 transition-all">
-                                    <span>VIEW BIO</span>
-                                    <span class="material-symbols-outlined text-xs font-bold">arrow_forward</span>
-                                </div>
-                            </a>
-                            <% }) %>
-                    </div>
-                    <% } %>
-        </section>
 
-        <!-- MODERATE SECTION -->
-        <section class="status-section bg-[var(--muted-amber)] p-8 border border-black/5 animate-section-2">
-            <div class="flex items-end justify-between mb-6">
-                <div class="flex items-center gap-3">
-                    <span class="material-symbols-outlined text-3xl font-bold">warning</span>
-                    <h2 class="text-4xl font-black uppercase tracking-tighter">Moderate</h2>
-                </div>
-                <p class="text-sm font-bold opacity-60 uppercase tracking-widest">
-                    <%= others.filter(p=>p.severity==='Amber').length %> ACTIVE CASES
-                </p>
-            </div>
-
-            <% if(others.filter(p=>p.severity==='Amber').length === 0) { %>
-                <div class="flex items-center justify-center py-16 bg-white/40 border border-black/5 rounded-xl">
-                    <p class="text-xl font-black opacity-30 uppercase tracking-tighter italic">NO CASES UNDER
-                        OBSERVATION</p>
-                </div>
-                <% } else { %>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                        <% others.filter(p=>p.severity==='Amber').forEach(p => { %>
-                            <a href="/patient/<%= p._id %>"
-                                class="square-card bg-white p-10 border border-black/5 shadow-sm flex flex-col items-center text-center group cursor-pointer aspect-[3/4] justify-center">
-                                <div
-                                    class="w-20 h-20 bg-black/5 avatar-square flex items-center justify-center mb-8 overflow-hidden">
-                                    <span class="material-symbols-outlined text-4xl text-black/60">person</span>
-                                </div>
-                                <h3 class="text-2xl font-black mb-1 tracking-tight uppercase">
-                                    <%= p.name %>
-                                </h3>
-                                <p class="text-[10px] font-bold tracking-[0.2em] mb-8 text-black/50 uppercase">
-                                    <%= p.problem %>
-                                </p>
-                                <div class="w-12 h-[1px] bg-black/20 mb-8"></div>
-                                <div
-                                    class="flex items-center gap-2 font-black uppercase text-[10px] tracking-[0.2em] group-hover:gap-4 transition-all">
-                                    <span>VIEW BIO</span>
-                                    <span class="material-symbols-outlined text-xs font-bold">arrow_forward</span>
-                                </div>
-                            </a>
-                            <% }) %>
+                <% if(critical.length===0) { %>
+                    <div class="flex items-center justify-center py-16 bg-white/40 border border-black/5 rounded-xl">
+                        <div class="text-center">
+                            <span class="material-symbols-outlined text-4xl mb-3 opacity-30">check_circle</span>
+                            <p class="text-xl font-black opacity-30 uppercase tracking-tighter">UNIT CLEAR</p>
+                        </div>
                     </div>
-                    <% } %>
-        </section>
+                    <% } else { %>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <% critical.forEach(p=> { %>
+                                <a href="/patient/<%= p._id %>"
+                                    class="square-card bg-white p-10 border border-black/5 shadow-sm flex flex-col items-center text-center group cursor-pointer aspect-[3/4] justify-center">
+                                    <div
+                                        class="w-20 h-20 bg-black/5 avatar-square flex items-center justify-center mb-8 overflow-hidden">
+                                        <span class="material-symbols-outlined text-4xl text-black/60">person</span>
+                                    </div>
+                                    <h3 class="text-2xl font-black mb-1 tracking-tight uppercase">
+                                        <%= p.name %>
+                                    </h3>
+                                    <p class="text-[10px] font-bold tracking-[0.2em] mb-8 text-black/50 uppercase">
+                                        <%= p.problem %>
+                                    </p>
+                                    <div class="w-12 h-[1px] bg-black/20 mb-8"></div>
+                                    <div
+                                        class="flex items-center gap-2 font-black uppercase text-[10px] tracking-[0.2em] group-hover:gap-4 transition-all">
+                                        <span>VIEW BIO</span>
+                                        <span class="material-symbols-outlined text-xs font-bold">arrow_forward</span>
+                                    </div>
+                                </a>
+                                <% }) %>
+                        </div>
+                        <% } %>
+            </section>
+
+            <!-- MODERATE SECTION -->
+            <section class="status-section bg-[var(--muted-amber)] p-8 border border-black/5 animate-section-2">
+                <div class="flex items-end justify-between mb-6">
+                    <div class="flex items-center gap-3">
+                        <span class="material-symbols-outlined text-3xl font-bold">warning</span>
+                        <h2 class="text-4xl font-black uppercase tracking-tighter">Moderate</h2>
+                    </div>
+                    <p class="text-sm font-bold opacity-60 uppercase tracking-widest">
+                        <%= others.filter(p=>p.severity==='Amber').length %> ACTIVE CASES
+                    </p>
+                </div>
+
+                <% if(others.filter(p=>p.severity==='Amber').length === 0) { %>
+                    <div class="flex items-center justify-center py-16 bg-white/40 border border-black/5 rounded-xl">
+                        <p class="text-xl font-black opacity-30 uppercase tracking-tighter italic">NO CASES UNDER
+                            OBSERVATION</p>
+                    </div>
+                    <% } else { %>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <% others.filter(p=>p.severity==='Amber').forEach(p => { %>
+                                <a href="/patient/<%= p._id %>"
+                                    class="square-card bg-white p-10 border border-black/5 shadow-sm flex flex-col items-center text-center group cursor-pointer aspect-[3/4] justify-center">
+                                    <div
+                                        class="w-20 h-20 bg-black/5 avatar-square flex items-center justify-center mb-8 overflow-hidden">
+                                        <span class="material-symbols-outlined text-4xl text-black/60">person</span>
+                                    </div>
+                                    <h3 class="text-2xl font-black mb-1 tracking-tight uppercase">
+                                        <%= p.name %>
+                                    </h3>
+                                    <p class="text-[10px] font-bold tracking-[0.2em] mb-8 text-black/50 uppercase">
+                                        <%= p.problem %>
+                                    </p>
+                                    <div class="w-12 h-[1px] bg-black/20 mb-8"></div>
+                                    <div
+                                        class="flex items-center gap-2 font-black uppercase text-[10px] tracking-[0.2em] group-hover:gap-4 transition-all">
+                                        <span>VIEW BIO</span>
+                                        <span class="material-symbols-outlined text-xs font-bold">arrow_forward</span>
+                                    </div>
+                                </a>
+                                <% }) %>
+                        </div>
+                        <% } %>
+            </section>
+        </div>
 
         <!-- STABLE SECTION -->
         <section class="status-section bg-[var(--muted-green)] p-8 border border-black/5 animate-section-3">
