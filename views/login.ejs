@@ -228,6 +228,46 @@
                 width: 16px;
             }
         }
+        
+        /* Page Load Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        
+        .animate-header {
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+        
+        .animate-card {
+            animation: fadeInUp 1s ease-out 0.2s forwards;
+            opacity: 0;
+        }
+        
+        .animate-hero {
+            animation: fadeInUp 1s ease-out 0.4s forwards;
+            opacity: 0;
+        }
+        
+        .animate-footer {
+            animation: fadeIn 1s ease-out 0.6s forwards;
+            opacity: 0;
+        }
     </style>
 </head>
 
@@ -239,23 +279,18 @@
     </div>
 
     <div class="relative z-10 flex flex-col min-h-screen">
-        <header class="flex items-center justify-between px-8 md:px-16 py-8">
+        <header class="flex items-center justify-between px-8 md:px-16 py-8 animate-header">
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-cream">
                     <span class="text-2xl">🏥</span>
                 </div>
                 <h2 class="text-lg font-extrabold tracking-tight text-primary">Medical RAG System</h2>
             </div>
-            <div class="flex items-center gap-8">
-                <nav class="hidden md:flex gap-8 text-sm font-medium text-primary/60">
-                    <a class="hover:text-primary transition-colors" href="#">Dashboard</a>
-                    <a class="hover:text-primary transition-colors" href="#">Patients</a>
-                </nav>
-            </div>
+
         </header>
 
         <main class="flex-1 flex flex-col md:flex-row items-center px-8 md:px-16 pb-12">
-            <div class="w-full md:w-5/12 lg:w-4/12 flex flex-col gap-8 order-2 md:order-1 mt-12 md:mt-0">
+            <div class="w-full md:w-5/12 lg:w-4/12 flex flex-col gap-8 order-2 md:order-1 mt-12 md:mt-0 animate-card">
                 <div class="glass-card p-12 md:p-14 shadow-2xl shadow-primary/10 border border-medical-blue/30">
                     <div class="mb-10 text-center md:text-left">
                         <h1 class="text-4xl font-extrabold tracking-tight mb-3 text-primary">Healthcare Access</h1>
@@ -297,13 +332,6 @@
                             </div>
                         </div>
 
-                        <div class="flex items-center gap-3 py-2 ml-1">
-                            <input class="w-4 h-4 rounded-md border-slate-400/40 text-primary focus:ring-primary"
-                                id="remember" type="checkbox" />
-                            <label class="text-xs font-medium text-primary/60 cursor-pointer" for="remember">
-                                Stay signed in for 30 days
-                            </label>
-                        </div>
 
                         <button
                             class="w-full h-14 bg-primary hover:bg-opacity-90 text-cream font-bold rounded-2xl shadow-lg shadow-primary/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2">
@@ -315,7 +343,7 @@
             </div>
 
             <div
-                class="hidden md:flex flex-1 flex-col items-center justify-center relative order-1 md:order-2 pl-12 lg:pl-24">
+                class="hidden md:flex flex-1 flex-col items-center justify-center relative order-1 md:order-2 pl-12 lg:pl-24 animate-hero">
                 <div class="max-w-lg space-y-8">
                     <div class="relative">
                         <div
@@ -346,7 +374,7 @@
         </main>
 
         <footer
-            class="px-8 md:px-16 py-8 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] font-bold uppercase tracking-widest text-primary/40">
+            class="px-8 md:px-16 py-8 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] font-bold uppercase tracking-widest text-primary/40 animate-footer">
             <div>© 2024 Medical RAG System. All Rights Reserved.</div>
             <div class="flex gap-8">
                 <a class="hover:text-primary transition-colors" href="#">Privacy Policy</a>
