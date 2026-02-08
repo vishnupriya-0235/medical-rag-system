@@ -27,23 +27,38 @@
             color: var(--liquid-black);
         }
         .square-card {
-            border-radius: 6px;
-            transition: all 0.3s ease;
+            border-radius: 16px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
         .square-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.1);
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 24px 48px -12px rgba(0,0,0,0.15);
         }
         .avatar-square {
-            border-radius: 4px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(0,0,0,0.03) 0%, rgba(0,0,0,0.08) 100%);
         }
         .glass-header {
-            background: rgba(245, 242, 234, 0.95);
-            backdrop-filter: blur(10px);
+            background: rgba(245, 242, 234, 0.98);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
         }
         .status-section {
-            border-radius: 8px;
-            transition: background-color 0.3s ease;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+        .status-section:hover {
+            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+        }
+        .add-new-card {
+            border-radius: 16px;
+            transition: all 0.3s ease;
+        }
+        .add-new-card:hover {
+            transform: scale(1.05);
+            border-color: rgba(0,0,0,0.3);
         }
         
         /* Alert Overlay */
@@ -91,7 +106,7 @@
     <header
         class="sticky top-0 z-50 px-12 py-6 glass-header flex items-center justify-between border-b border-black/10">
         <div class="flex items-center gap-4">
-            <div class="w-10 h-10 bg-black flex items-center justify-center text-white rounded-sm">
+            <div class="w-10 h-10 bg-black flex items-center justify-center text-white rounded-xl">
                 <span class="material-symbols-outlined text-2xl">analytics</span>
             </div>
             <h1 class="text-2xl font-black tracking-tighter uppercase">Observation Monitor</h1>
@@ -101,15 +116,15 @@
                 <span
                     class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-black text-xl">search</span>
                 <input id="searchInput" onkeyup="searchPatient()"
-                    class="pl-12 pr-6 py-3 bg-black/5 border border-black/5 rounded-sm w-80 focus:ring-1 focus:ring-black focus:bg-white transition-all outline-none placeholder-black/40 font-medium text-sm"
+                    class="pl-12 pr-6 py-3 bg-black/5 border border-black/5 rounded-xl w-80 focus:ring-2 focus:ring-black focus:bg-white transition-all outline-none placeholder-black/40 font-medium text-sm"
                     placeholder="Search patients..." type="text" />
             </div>
             <a href="/add-patient"
-                class="bg-black text-white px-8 py-3 rounded-sm font-bold text-sm uppercase tracking-wider hover:bg-zinc-800 transition-all active:scale-95 shadow-lg shadow-black/10">
+                class="bg-black text-white px-8 py-3 rounded-xl font-bold text-sm uppercase tracking-wider hover:bg-zinc-800 transition-all active:scale-95 shadow-lg shadow-black/10">
                 + Add Patient
             </a>
             <a href="/logout"
-                class="w-11 h-11 border border-black/10 flex items-center justify-center rounded-sm hover:bg-black hover:text-white transition-colors">
+                class="w-11 h-11 border border-black/10 flex items-center justify-center rounded-xl hover:bg-black hover:text-white transition-colors">
                 <span class="material-symbols-outlined text-xl">logout</span>
             </a>
         </div>
@@ -131,7 +146,7 @@
             </div>
 
             <% if(critical.length===0) { %>
-                <div class="flex items-center justify-center py-24 bg-white/40 border border-black/5 rounded-sm">
+                <div class="flex items-center justify-center py-24 bg-white/40 border border-black/5 rounded-xl">
                     <div class="text-center">
                         <span class="material-symbols-outlined text-4xl mb-3 opacity-30">check_circle</span>
                         <p class="text-xl font-black opacity-30 uppercase tracking-tighter">UNIT CLEAR</p>
@@ -177,7 +192,7 @@
             </div>
 
             <% if(others.filter(p=>p.severity==='Amber').length === 0) { %>
-                <div class="flex items-center justify-center py-24 bg-white/40 border border-black/5 rounded-sm">
+                <div class="flex items-center justify-center py-24 bg-white/40 border border-black/5 rounded-xl">
                     <p class="text-xl font-black opacity-30 uppercase tracking-tighter italic">NO CASES UNDER
                         OBSERVATION</p>
                 </div>
@@ -245,9 +260,9 @@
 
                         <!-- ADD NEW CARD -->
                         <a href="/add-patient"
-                            class="square-card border-2 border-dashed border-black/20 bg-white/40 flex flex-col items-center justify-center p-10 group hover:border-black/40 transition-all cursor-pointer aspect-[3/4]">
+                            class="add-new-card border-2 border-dashed border-black/20 bg-white/40 flex flex-col items-center justify-center p-10 group hover:border-black/40 transition-all cursor-pointer aspect-[3/4]">
                             <div
-                                class="w-16 h-16 bg-black text-white rounded-sm flex items-center justify-center mb-6 group-hover:scale-105 transition-transform">
+                                class="w-16 h-16 bg-black text-white rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                                 <span class="material-symbols-outlined text-3xl font-bold">add</span>
                             </div>
                             <p class="font-black uppercase tracking-[0.2em] text-[10px] text-black/60">ADD NEW</p>
@@ -260,7 +275,7 @@
     <!-- FOOTER -->
     <footer class="p-12 flex justify-center">
         <div
-            class="bg-black text-white px-8 py-4 rounded-sm flex items-center gap-4 text-[10px] font-bold tracking-[0.2em] uppercase shadow-xl">
+            class="bg-black text-white px-8 py-4 rounded-xl flex items-center gap-4 text-[10px] font-bold tracking-[0.2em] uppercase shadow-xl">
             <span class="material-symbols-outlined text-lg">verified_user</span>
             SECURED SYSTEM NODE 402
         </div>
