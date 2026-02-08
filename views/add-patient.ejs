@@ -58,6 +58,27 @@
             appearance: textfield;
         }
 
+        /* Custom select dropdown styling */
+        select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath fill='%232D364D' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1.5rem;
+            padding-right: 3rem;
+        }
+
+        select option {
+            background-color: #F2F1E1;
+            color: #2D364D;
+            padding: 0.75rem;
+        }
+
+        select option:checked,
+        select option:hover {
+            background-color: #2D364D;
+            color: white;
+        }
+
         .organic-shape {
             filter: blur(80px);
             z-index: -1;
@@ -80,18 +101,6 @@
         class="fixed top-[20%] right-[-10%] w-[25vw] h-[25vw] bg-slate-custom dark:bg-primary/20 organic-shape rounded-full">
     </div>
 
-    <!-- Navigation -->
-    <nav class="p-6 flex justify-between items-center max-w-7xl mx-auto relative z-10">
-        <a href="/dashboard"
-            class="p-3 rounded-full bg-white/50 dark:bg-gray-800/50 backdrop-blur-md border border-white/20 dark:border-gray-700 shadow-sm flex items-center justify-center transition-all hover:scale-110">
-            <span class="material-icons-round text-primary dark:text-champagne-custom">arrow_back</span>
-        </a>
-        <button
-            class="p-3 rounded-full bg-white/50 dark:bg-gray-800/50 backdrop-blur-md border border-white/20 dark:border-gray-700 shadow-sm flex items-center justify-center transition-all hover:scale-110"
-            onclick="document.documentElement.classList.toggle('dark')">
-            <span class="material-icons-round text-primary dark:text-champagne-custom">contrast</span>
-        </button>
-    </nav>
 
     <!-- Main Content -->
     <main class="flex flex-col items-center justify-center px-4 pb-20 relative z-10">
