@@ -130,21 +130,35 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.95);
+            background: rgba(0, 0, 0, 0.96);
             z-index: 9999;
             align-items: center;
             justify-content: center;
             flex-direction: column;
-            animation: fadeIn 0.3s ease;
         }
         
         #alert-overlay.active {
             display: flex;
+            animation: overlayFadeIn 0.4s ease-out, borderFlash 2s ease-in-out infinite;
         }
         
-        @keyframes fadeIn {
+        @keyframes overlayFadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
+        }
+        
+        @keyframes alertPulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.03); }
+        }
+        
+        @keyframes borderFlash {
+            0%, 100% { box-shadow: inset 0 0 0 4px rgba(239, 68, 68, 0.9), 0 0 80px rgba(239, 68, 68, 0.12); }
+            50% { box-shadow: inset 0 0 0 8px rgba(239, 68, 68, 0.4), 0 0 160px rgba(239, 68, 68, 0.06); }
+        }
+        
+        .alert-title-pulse {
+            animation: alertPulse 1.5s ease-in-out infinite;
         }
     </style>
 </head>
@@ -153,7 +167,14 @@
 
     <!-- ALERT SYSTEM -->
     <div id="alert-overlay">
-        <h1 class="text-6xl font-black text-red-500 mb-6 uppercase tracking-tighter">⚠️ CRITICAL ALERT</h1>
+        <!-- Close Button (X) -->
+        <button onclick="acknowledgeAlerts()" 
+            class="absolute top-8 right-8 w-12 h-12 flex items-center justify-center text-white/70 hover:text-white hover:bg-white/10 rounded-full transition-all text-3xl font-light"
+            title="Close Alert">
+            <span class="material-symbols-outlined text-4xl">close</span>
+        </button>
+        
+        <h1 class="text-6xl font-black text-red-500 mb-6 uppercase tracking-tighter alert-title-pulse">⚠️ CRITICAL ALERT</h1>
         <h2 id="alert-count" class="text-3xl font-bold text-white mb-8"></h2>
         <div id="alert-list" class="text-white text-xl mb-12 max-w-2xl"></div>
         <button
@@ -337,81 +358,158 @@
     <script>
         const socket = io();
         let criticalList = [];
-        let alarmInterval;
+        let alarmInterval = null;
+        let audioCtx = null;
 
-        // Animate patient cards on load
+        // ========== PERSISTENT ALERT STORAGE (Latch Protocol) ==========
+        const PENDING_KEY = 'pendingCriticalAlerts';
+        const ACKNOWLEDGED_KEY = 'acknowledgedAlerts';
+        const ACKNOWLEDGE_COOLDOWN = 60 * 1000; // 1-min cooldown per patient
+
+        function getPendingAlerts() {
+            try { return JSON.parse(sessionStorage.getItem(PENDING_KEY) || '[]'); }
+            catch (e) { return []; }
+        }
+        function savePendingAlerts() {
+            sessionStorage.setItem(PENDING_KEY, JSON.stringify(criticalList));
+        }
+        function clearPendingAlerts() {
+            sessionStorage.removeItem(PENDING_KEY);
+        }
+
+        function getAcknowledgedAlerts() {
+            try {
+                const stored = localStorage.getItem(ACKNOWLEDGED_KEY);
+                if (!stored) return {};
+                const parsed = JSON.parse(stored);
+                const now = Date.now();
+                Object.keys(parsed).forEach(id => {
+                    if (now - parsed[id] > ACKNOWLEDGE_COOLDOWN) delete parsed[id];
+                });
+                localStorage.setItem(ACKNOWLEDGED_KEY, JSON.stringify(parsed));
+                return parsed;
+            } catch (e) { return {}; }
+        }
+        function markAlertAcknowledged(id) {
+            const ack = getAcknowledgedAlerts();
+            ack[id] = Date.now();
+            localStorage.setItem(ACKNOWLEDGED_KEY, JSON.stringify(ack));
+        }
+        function isAlertAcknowledged(id) {
+            return !!getAcknowledgedAlerts()[id];
+        }
+
+        // ========== PAGE LOAD: Restore Latched Alerts ==========
         document.addEventListener('DOMContentLoaded', () => {
-            const cards = document.querySelectorAll('.square-card, .add-new-card');
-            cards.forEach((card, index) => {
+            // Restore any pending (unacknowledged) alerts — they survive page reloads
+            const pending = getPendingAlerts();
+            if (pending.length > 0) {
+                criticalList = pending;
+                showAlertOverlay();
+            }
+            // Animate patient cards
+            document.querySelectorAll('.square-card, .add-new-card').forEach((card, i) => {
                 card.classList.add('animate-card');
-                card.style.animationDelay = `${0.4 + (index * 0.08)}s`;
+                card.style.animationDelay = `${0.4 + (i * 0.08)}s`;
             });
         });
 
-        // Search functionality
+        // ========== SEARCH ==========
         function searchPatient() {
             const val = document.getElementById('searchInput').value.toLowerCase();
             document.querySelectorAll('.square-card').forEach(c => {
                 const nameEl = c.querySelector('h3');
-                if (nameEl) {
-                    const name = nameEl.innerText.toLowerCase();
-                    if (c.href && c.href.includes('/patient/')) {
-                        c.style.display = name.includes(val) ? "" : "none";
-                    }
+                if (nameEl && c.href && c.href.includes('/patient/')) {
+                    c.style.display = nameEl.innerText.toLowerCase().includes(val) ? '' : 'none';
                 }
             });
         }
-
         document.getElementById('searchInput').addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
-                const visibleCards = Array.from(document.querySelectorAll('.square-card'))
-                    .filter(c => c.style.display !== 'none');
-
-                if (visibleCards.length > 0) {
-                    window.location.href = visibleCards[0].href;
-                }
+                const visible = [...document.querySelectorAll('.square-card')].filter(c => c.style.display !== 'none');
+                if (visible.length > 0) window.location.href = visible[0].href;
             }
         });
 
-        // Alert system
+        // ========== SOCKET: Emergency Alert (Real-Time Push via WebSocket) ==========
         socket.on('emergency_alert', data => {
-            if (!criticalList.find(p => p.id === data.id)) {
-                criticalList.push(data);
-                const overlay = document.getElementById('alert-overlay');
-                overlay.classList.add('active');
-                overlay.style.display = 'flex';
-                document.getElementById('alert-count').innerText = `${criticalList.length} CRITICAL PATIENT(S)`;
-                document.getElementById('alert-list').innerHTML =
-                    criticalList.map(p => `<p class="mb-2"><strong>${p.name}</strong> - HR: ${p.hr} | O2: ${p.o2}%</p>`).join('');
-                if (!alarmInterval) {
-                    alarmInterval = setInterval(playAlarm, 1000);
-                }
-            }
+            // Skip duplicates and recently-acknowledged patients
+            if (criticalList.find(p => p.id === data.id) || isAlertAcknowledged(data.id)) return;
+            criticalList.push(data);
+            savePendingAlerts(); // LATCH: persist to sessionStorage
+            showAlertOverlay();
         });
 
-        function acknowledgeAlerts() {
-            criticalList = [];
-            clearInterval(alarmInterval);
-            alarmInterval = null;
+        // ========== SOCKET: 10-Second Data Cycle ==========
+        // CRITICAL: Do NOT reload if the alert overlay is active (Latch Protocol)
+        socket.on('update_data', () => {
+            if (criticalList.length === 0) {
+                location.reload();
+            }
+            // Alert is latched — overlay stays, page does NOT reload
+        });
+
+        // ========== FULL-SCREEN ALERT OVERLAY ==========
+        function showAlertOverlay() {
+            if (criticalList.length === 0) return;
             const overlay = document.getElementById('alert-overlay');
-            overlay.classList.remove('active');
-            overlay.style.display = 'none';
+            overlay.classList.add('active');
+            document.getElementById('alert-count').innerText =
+                criticalList.length + ' CRITICAL PATIENT(S)';
+            document.getElementById('alert-list').innerHTML = criticalList.map(p =>
+                '<p class="mb-3 text-lg"><strong>' + p.name + '</strong> - HR: ' + p.hr + ' | O2: ' + p.o2 + '%</p>'
+            ).join('');
+            startAlarm();
         }
 
+        // ========== ACKNOWLEDGE: Human-in-the-Loop ==========
+        function acknowledgeAlerts() {
+            // 1. Mark each alert as acknowledged (prevents re-trigger for cooldown)
+            criticalList.forEach(p => {
+                markAlertAcknowledged(p.id);
+                // 2. Tell server to release the alertLock
+                fetch('/acknowledge/' + p.id, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                }).catch(() => {});
+            });
+            // 3. Clear client-side latch
+            criticalList = [];
+            clearPendingAlerts();
+            stopAlarm();
+            // 4. Dismiss overlay
+            document.getElementById('alert-overlay').classList.remove('active');
+            // 5. Reload to reflect fresh dashboard data
+            setTimeout(() => location.reload(), 400);
+        }
+
+        // ========== ALARM: Two-Tone Medical Beep ==========
+        function startAlarm() {
+            if (alarmInterval) return;
+            playAlarm();
+            alarmInterval = setInterval(playAlarm, 1500);
+        }
+        function stopAlarm() {
+            if (alarmInterval) { clearInterval(alarmInterval); alarmInterval = null; }
+        }
         function playAlarm() {
-            const ctx = new (window.AudioContext || window.webkitAudioContext)();
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.connect(gain);
-            gain.connect(ctx.destination);
-            osc.frequency.value = 880;
-            gain.gain.value = 0.05;
-            osc.start();
-            osc.stop(ctx.currentTime + 0.3);
+            try {
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                // High tone
+                const osc1 = audioCtx.createOscillator();
+                const gain1 = audioCtx.createGain();
+                osc1.connect(gain1); gain1.connect(audioCtx.destination);
+                osc1.frequency.value = 880; gain1.gain.value = 0.06;
+                osc1.start(); osc1.stop(audioCtx.currentTime + 0.25);
+                // Low tone (staggered)
+                const osc2 = audioCtx.createOscillator();
+                const gain2 = audioCtx.createGain();
+                osc2.connect(gain2); gain2.connect(audioCtx.destination);
+                osc2.frequency.value = 660; gain2.gain.value = 0.06;
+                osc2.start(audioCtx.currentTime + 0.35);
+                osc2.stop(audioCtx.currentTime + 0.6);
+            } catch (e) { /* Audio context not available */ }
         }
-
-        // Auto-update dashboard
-        socket.on('update_data', () => location.reload());
     </script>
 
 </body>

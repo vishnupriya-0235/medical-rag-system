@@ -13,6 +13,7 @@ const io = socketIo(server);
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 // --- 2. DATABASE CONNECTION ---
 mongoose.connect('mongodb://127.0.0.1:27017/observationDB')
@@ -158,6 +159,20 @@ app.post('/add-patient', async (req, res) => {
         }
     });
     res.redirect('/dashboard');
+});
+
+// --- ACKNOWLEDGE ALERT (Human-in-the-Loop) ---
+app.post('/acknowledge/:id', async (req, res) => {
+    try {
+        const patient = await Patient.findById(req.params.id);
+        if (patient) {
+            patient.alertLock = 0;
+            await patient.save();
+        }
+        res.json({ success: true });
+    } catch (err) {
+        res.json({ success: false });
+    }
 });
 
 app.post('/delete-patient/:id', async (req, res) => {
