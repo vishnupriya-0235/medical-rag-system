@@ -13,6 +13,7 @@ const io = socketIo(server);
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 // --- 2. DATABASE CONNECTION ---
 mongoose.connect('mongodb://127.0.0.1:27017/observationDB')
@@ -24,17 +25,17 @@ mongoose.connect('mongodb://127.0.0.1:27017/observationDB')
 function predictSeverity(p) {
     return new Promise((resolve) => {
         const python = spawn('python', [
-            './ml_model/predict.py', 
-            p.problemCode, 
-            p.vitals.heartRate, 
-            p.vitals.oxygen, 
+            './ml_model/predict.py',
+            p.problemCode,
+            p.vitals.heartRate,
+            p.vitals.oxygen,
             p.vitals.temp,
             p.vitals.respiratoryRate,
             p.vitals.systolicBP,
             p.vitals.diastolicBP,
             p.age
         ]);
-        
+
         python.stdout.on('data', (data) => {
             const result = data.toString().trim();
             const map = { "0": "Green", "1": "Amber", "2": "Red" };
@@ -51,7 +52,7 @@ function predictSeverity(p) {
 setInterval(async () => {
     try {
         const patients = await Patient.find();
-        
+
         for (let p of patients) {
             const oldSeverity = p.severity;
 
@@ -74,7 +75,7 @@ setInterval(async () => {
                 p.severity = 'Red';
                 p.alertLock = 6; // Lock for 1 minute
             } else if (p.alertLock > 0) {
-                p.severity = 'Red'; 
+                p.severity = 'Red';
                 p.alertLock -= 1;
             } else {
                 p.severity = newSeverity;
@@ -85,10 +86,10 @@ setInterval(async () => {
             // 5. Trigger Socket Alert ONLY if it's NEW
             // Added RR and BP to the alert payload for your alert system
             if (p.severity === 'Red' && oldSeverity !== 'Red') {
-                io.emit('emergency_alert', { 
-                    id: p._id, 
-                    name: p.name, 
-                    hr: p.vitals.heartRate, 
+                io.emit('emergency_alert', {
+                    id: p._id,
+                    name: p.name,
+                    hr: p.vitals.heartRate,
                     o2: p.vitals.oxygen,
                     respRate: p.vitals.respiratoryRate,
                     sysBP: p.vitals.systolicBP,
@@ -96,7 +97,7 @@ setInterval(async () => {
                 });
             }
         }
-        io.emit('update_data'); 
+        io.emit('update_data');
     } catch (err) {
         console.error("Simulator Error:", err);
     }
@@ -111,7 +112,7 @@ app.get('/', (req, res) => {
 app.post('/login', (req, res) => {
     const { username, password } = req.body;
     if (username === 'admin' && password === '1234') {
-        res.redirect('/dashboard'); 
+        res.redirect('/dashboard');
     } else {
         res.send("Invalid Credentials. <a href='/'>Go back</a>");
     }
@@ -138,20 +139,40 @@ app.get('/add-patient', (req, res) => {
 });
 
 app.post('/add-patient', async (req, res) => {
-    const { name, age, problem, problemCode, systolicBP, respiratoryRate } = req.body;
-    await Patient.create({ 
-        name, age, problem, 
+    const {
+        name, age, problem, problemCode,
+        heartRate, oxygen, temp, respiratoryRate, systolicBP, diastolicBP
+    } = req.body;
+
+    await Patient.create({
+        name,
+        age,
+        problem,
         problemCode: parseInt(problemCode),
-        vitals: { 
-            heartRate: 75, 
-            oxygen: 98, 
-            temp: 98.6,
-            respiratoryRate: respiratoryRate || 16,
-            systolicBP: systolicBP || 120,
-            diastolicBP: 80
+        vitals: {
+            heartRate: parseInt(heartRate) || 75,
+            oxygen: parseInt(oxygen) || 98,
+            temp: parseFloat(temp) || 98.6,
+            respiratoryRate: parseInt(respiratoryRate) || 16,
+            systolicBP: parseInt(systolicBP) || 120,
+            diastolicBP: parseInt(diastolicBP) || 80
         }
     });
     res.redirect('/dashboard');
+});
+
+// --- ACKNOWLEDGE ALERT (Human-in-the-Loop) ---
+app.post('/acknowledge/:id', async (req, res) => {
+    try {
+        const patient = await Patient.findById(req.params.id);
+        if (patient) {
+            patient.alertLock = 0;
+            await patient.save();
+        }
+        res.json({ success: true });
+    } catch (err) {
+        res.json({ success: false });
+    }
 });
 
 app.post('/delete-patient/:id', async (req, res) => {

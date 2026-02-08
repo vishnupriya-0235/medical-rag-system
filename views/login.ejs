@@ -1,45 +1,423 @@
 <!DOCTYPE html>
-<html lang="en">
+<html class="light" lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Medical RAG System - Login</title>
-    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2D3447",
+                        "slate-gray": "#A9B8C2",
+                        "champagne": "#E1DBC5",
+                        "cream": "#F2F2E2",
+                        "background-light": "#F2F2E2",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "ultra": "4rem",
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+    <style type="text/tailwindcss">
+        :root {
+            --primary-navy: #2D3447;
+            --slate-blue: #A9B8C2;
+            --champagne-beige: #E1DBC5;
+            --cream-bg: #F2F2E2;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--cream-bg);
+        }
+        .blob-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+        }
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.4;
+        }
+        .blob-1 {
+            width: 700px;
+            height: 700px;
+            top: -150px;
+            left: -150px;
+            background: var(--slate-blue);
+        }
+        .blob-2 {
+            width: 600px;
+            height: 600px;
+            bottom: -100px;
+            right: 15%;
+            background: var(--champagne-beige);
+        }
+        .blob-3 {
+            width: 500px;
+            height: 500px;
+            top: 15%;
+            right: -100px;
+            background: var(--slate-blue);
+            opacity: 0.25;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 4.5rem;
+        }
+        .input-group:focus-within label {
+            color: var(--primary-navy);
+            transform: translateY(-2px);
+        }
+        .morph-input {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .morph-input:focus {
+            border-radius: 1.5rem;
+            box-shadow: 0 0 0 4px rgba(45, 52, 71, 0.08);
+            border-color: var(--primary-navy);
+        }
+        
+        /* Loading Animation */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #1a1a1a;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+        
+        .loading-overlay.active {
+            display: flex;
+        }
+        
+        .loader {
+            width: 80px;
+            height: 50px;
+            position: relative;
+        }
+
+        .loader-text {
+            position: absolute;
+            top: 0;
+            padding: 0;
+            margin: 0;
+            color: #C8B6FF;
+            animation: text_713 3.5s ease both infinite;
+            font-size: .8rem;
+            letter-spacing: 1px;
+        }
+
+        .load {
+            background-color: #9A79FF;
+            border-radius: 50px;
+            display: block;
+            height: 16px;
+            width: 16px;
+            bottom: 0;
+            position: absolute;
+            transform: translateX(64px);
+            animation: loading_713 3.5s ease both infinite;
+        }
+
+        .load::before {
+            position: absolute;
+            content: "";
+            width: 100%;
+            height: 100%;
+            background-color: #D1C2FF;
+            border-radius: inherit;
+            animation: loading2_713 3.5s ease both infinite;
+        }
+
+        @keyframes text_713 {
+            0% {
+                letter-spacing: 1px;
+                transform: translateX(0px);
+            }
+            40% {
+                letter-spacing: 2px;
+                transform: translateX(26px);
+            }
+            80% {
+                letter-spacing: 1px;
+                transform: translateX(32px);
+            }
+            90% {
+                letter-spacing: 2px;
+                transform: translateX(0px);
+            }
+            100% {
+                letter-spacing: 1px;
+                transform: translateX(0px);
+            }
+        }
+
+        @keyframes loading_713 {
+            0% {
+                width: 16px;
+                transform: translateX(0px);
+            }
+            40% {
+                width: 100%;
+                transform: translateX(0px);
+            }
+            80% {
+                width: 16px;
+                transform: translateX(64px);
+            }
+            90% {
+                width: 100%;
+                transform: translateX(0px);
+            }
+            100% {
+                width: 16px;
+                transform: translateX(0px);
+            }
+        }
+
+        @keyframes loading2_713 {
+            0% {
+                transform: translateX(0px);
+                width: 16px;
+            }
+            40% {
+                transform: translateX(0%);
+                width: 80%;
+            }
+            80% {
+                width: 100%;
+                transform: translateX(0px);
+            }
+            90% {
+                width: 80%;
+                transform: translateX(15px);
+            }
+            100% {
+                transform: translateX(0px);
+                width: 16px;
+            }
+        }
+        
+        /* Page Load Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        
+        .animate-header {
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+        
+        .animate-card {
+            animation: fadeInUp 1s ease-out 0.2s forwards;
+            opacity: 0;
+        }
+        
+        .animate-hero {
+            animation: fadeInUp 1s ease-out 0.4s forwards;
+            opacity: 0;
+        }
+        
+        .animate-footer {
+            animation: fadeIn 1s ease-out 0.6s forwards;
+            opacity: 0;
+        }
+    </style>
 </head>
-<body class="login-body">
 
-<div class="login-card">
-    <h2>🏥 Medical RAG System</h2>
-    <p>Healthcare Management Platform</p>
+<body class="text-primary min-h-screen relative overflow-hidden font-display">
+    <div class="blob-container pointer-events-none">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
 
-    <form action="/login" method="POST">
-        <div class="login-group">
-            <label for="username">Admin Username</label>
-            <input 
-                type="text" 
-                id="username"
-                name="username" 
-                placeholder="Enter your username" 
-                required
-                autocomplete="username"
-            >
+    <div class="relative z-10 flex flex-col min-h-screen">
+        <header class="flex items-center justify-between px-8 md:px-16 py-8 animate-header">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-cream">
+                    <span class="text-2xl">🏥</span>
+                </div>
+                <h2 class="text-lg font-extrabold tracking-tight text-primary">Medical RAG System</h2>
+            </div>
+
+        </header>
+
+        <main class="flex-1 flex flex-col md:flex-row items-center px-8 md:px-16 pb-12">
+            <div class="w-full md:w-5/12 lg:w-4/12 flex flex-col gap-8 order-2 md:order-1 mt-12 md:mt-0 animate-card">
+                <div class="glass-card p-12 md:p-14 shadow-2xl shadow-primary/10 border border-medical-blue/30">
+                    <div class="mb-10 text-center md:text-left">
+                        <h1 class="text-4xl font-extrabold tracking-tight mb-3 text-primary">Healthcare Access</h1>
+                        <p class="text-sm text-primary/60 leading-relaxed max-w-[280px] md:max-w-none mx-auto md:mx-0">
+                            Enter your credentials to access the patient monitoring dashboard.
+                        </p>
+                    </div>
+
+                    <form action="/login" method="POST" class="space-y-6">
+                        <div class="input-group flex flex-col gap-2">
+                            <label
+                                class="text-xs font-bold uppercase tracking-widest text-primary/50 transition-all duration-300 ml-1">
+                                Username
+                            </label>
+                            <input
+                                class="morph-input w-full bg-white border border-slate-400/40 h-14 px-6 rounded-2xl focus:outline-none text-base text-primary placeholder:text-primary/30"
+                                placeholder="admin" type="text" name="username" id="username" required
+                                autocomplete="username" />
+                        </div>
+
+                        <div class="input-group flex flex-col gap-2">
+                            <div class="flex justify-between items-center ml-1 pr-1">
+                                <label
+                                    class="text-xs font-bold uppercase tracking-widest text-primary/50 transition-all duration-300">
+                                    Password
+                                </label>
+                            </div>
+                            <div class="relative">
+                                <input
+                                    class="morph-input w-full bg-white border border-slate-400/40 h-14 px-6 pr-12 rounded-2xl focus:outline-none text-base text-primary placeholder:text-primary/30"
+                                    placeholder="••••••••" type="password" name="password" id="password" required
+                                    autocomplete="current-password" />
+                                <button
+                                    class="absolute right-5 top-1/2 -translate-y-1/2 text-primary/40 hover:text-primary transition-colors"
+                                    type="button" onclick="togglePassword()">
+                                    <span class="material-symbols-outlined text-xl"
+                                        id="visibilityIcon">visibility</span>
+                                </button>
+                            </div>
+                        </div>
+
+
+                        <button
+                            class="w-full h-14 bg-primary hover:bg-opacity-90 text-cream font-bold rounded-2xl shadow-lg shadow-primary/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2">
+                            Sign In to Dashboard
+                            <span class="material-symbols-outlined">arrow_forward</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div
+                class="hidden md:flex flex-1 flex-col items-center justify-center relative order-1 md:order-2 pl-12 lg:pl-24 animate-hero">
+                <div class="max-w-lg space-y-8">
+                    <div class="relative">
+                        <div
+                            class="absolute -top-12 -left-12 w-24 h-24 border-t-2 border-l-2 border-slate-gray/30 rounded-tl-3xl">
+                        </div>
+                        <h2 class="text-5xl lg:text-7xl font-extrabold tracking-tight leading-[1.1] text-primary">
+                            Monitoring <span class="italic text-slate-gray">patient</span> health in real-time.
+                        </h2>
+                        <div
+                            class="absolute -bottom-8 -right-8 w-16 h-16 border-b-2 border-r-2 border-slate-gray/30 rounded-br-2xl">
+                        </div>
+                    </div>
+
+                    <div class="flex gap-12 pt-8">
+                        <div>
+                            <div class="text-3xl font-bold text-primary">24/7</div>
+                            <div class="text-xs font-bold uppercase tracking-widest text-primary/40">Monitoring</div>
+                        </div>
+                        <div>
+                            <div class="text-3xl font-bold text-primary">AI</div>
+                            <div class="text-xs font-bold uppercase tracking-widest text-primary/40">Predictions</div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </main>
+
+        <footer
+            class="px-8 md:px-16 py-8 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] font-bold uppercase tracking-widest text-primary/40 animate-footer">
+            <div>© 2024 Medical RAG System. All Rights Reserved.</div>
+            <div class="flex gap-8">
+                <a class="hover:text-primary transition-colors" href="#">Privacy Policy</a>
+                <a class="hover:text-primary transition-colors" href="#">System Status</a>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loader">
+            <span class="loader-text">loading</span>
+            <span class="load"></span>
         </div>
+    </div>
 
-        <div class="login-group">
-            <label for="password">Password</label>
-            <input 
-                type="password" 
-                id="password"
-                name="password" 
-                placeholder="Enter your password" 
-                required
-                autocomplete="current-password"
-            >
-        </div>
+    <script>
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const visibilityIcon = document.getElementById('visibilityIcon');
 
-        <button type="submit" class="login-btn">Sign In</button>
-    </form>
-</div>
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                visibilityIcon.textContent = 'visibility_off';
+            } else {
+                passwordInput.type = 'password';
+                visibilityIcon.textContent = 'visibility';
+            }
+        }
 
+        // Handle form submission with loading animation
+        document.querySelector('form').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            // Show loading overlay
+            document.getElementById('loadingOverlay').classList.add('active');
+
+            // Submit form after 2 seconds
+            setTimeout(() => {
+                this.submit();
+            }, 2000);
+        });
+    </script>
 </body>
+
 </html>

@@ -1,88 +1,251 @@
 <!DOCTYPE html>
-<html lang="en">
+<html class="light" lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Patient Details - Medical RAG System</title>
-    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#2D364D",
+                        "slate-custom": "#A9B7C0",
+                        "champagne-custom": "#E2D9C0",
+                        "cream-custom": "#F2F1E1",
+                        "background-light": "#F2F1E1",
+                        "background-dark": "#1A1A1A",
+                    },
+                    fontFamily: {
+                        display: ["Outfit", "sans-serif"],
+                        body: ["Plus Jakarta Sans", "sans-serif"],
+                    },
+                    borderRadius: {
+                        'DEFAULT': '1rem',
+                        'squircle': '2.5rem',
+                    },
+                },
+            },
+        };
+    </script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .squircle {
+            border-radius: 3rem;
+        }
+
+        .organic-shape {
+            filter: blur(80px);
+            z-index: -1;
+            opacity: 0.6;
+        }
+
+        .info-card {
+            background-color: rgba(242, 241, 225, 0.5);
+            border-radius: 1rem;
+            padding: 1.25rem;
+            transition: all 0.3s ease;
+        }
+
+        .info-card:hover {
+            background-color: rgba(242, 241, 225, 0.8);
+            transform: translateY(-2px);
+        }
+    </style>
 </head>
 
-<body class="patient-detail-body">
+<body
+    class="bg-background-light dark:bg-background-dark min-h-screen relative overflow-x-hidden transition-colors duration-300">
 
-<div class="detail-card">
-    <h1><%= patient.name %></h1>
-    
-    <h3 style="
-        <% if(patient.severity === 'Red') { %>
-            background: #ffe6e6; color: var(--critical);
-        <% } else if(patient.severity === 'Amber') { %>
-            background: #fff3e0; color: var(--moderate);
-        <% } else { %>
-            background: #e6f5f0; color: var(--stable);
-        <% } %>
-    ">
-        Status: <strong><%= patient.severity %></strong>
-    </h3>
-
-    <!-- Patient Information Section -->
-    <div class="vitals" style="margin-bottom: 20px;">
-        <p style="border-bottom: 2px solid var(--primary); padding-bottom: 12px; margin-bottom: 12px;">
-            <span style="font-weight: 700; color: var(--primary);">📋 PATIENT INFORMATION</span>
-        </p>
-        <p>
-            <span>👤 Age</span>
-            <strong><%= patient.age %> years</strong>
-        </p>
-        <p>
-            <span>🏥 Admission Reason</span>
-            <strong><%= patient.problem %></strong>
-        </p>
-        <p>
-            <span>🏷️ Medical Category</span>
-            <strong>
-                <% 
-                    const categoryMap = {'1': 'Surgery', '2': 'Cardiac', '3': 'General'};
-                    const categoryIcons = {'1': '🏥', '2': '❤️', '3': '🩺'};
-                %>
-                <%= categoryIcons[patient.problemCode] %> <%= categoryMap[patient.problemCode] %>
-            </strong>
-        </p>
+    <!-- Organic Background Shapes -->
+    <div
+        class="fixed top-[-10%] left-[-5%] w-[40vw] h-[40vw] bg-champagne-custom dark:bg-primary/20 organic-shape rounded-full">
+    </div>
+    <div
+        class="fixed bottom-[-10%] right-[-5%] w-[35vw] h-[35vw] bg-slate-custom dark:bg-primary/10 organic-shape rounded-full">
+    </div>
+    <div
+        class="fixed top-[20%] right-[-10%] w-[25vw] h-[25vw] bg-slate-custom dark:bg-primary/20 organic-shape rounded-full">
     </div>
 
-    <!-- Vital Signs Section -->
-    <div class="vitals">
-        <p style="border-bottom: 2px solid var(--primary); padding-bottom: 12px; margin-bottom: 12px;">
-            <span style="font-weight: 700; color: var(--primary);">💉 VITAL SIGNS</span>
-        </p>
-        <p>
-            <span>❤️ Heart Rate</span>
-            <strong><%= patient.vitals.heartRate %> bpm</strong>
-        </p>
-        <p>
-            <span>🫁 Respiratory Rate</span>
-            <strong><%= patient.vitals.respiratoryRate %> rpm</strong>
-        </p>
-        <p>
-            <span>🩸 Blood Pressure</span>
-            <strong><%= patient.vitals.systolicBP %>/<%= patient.vitals.diastolicBP %> mmHg</strong>
-        </p>
-        <p>
-            <span>💧 Oxygen Level</span>
-            <strong><%= patient.vitals.oxygen %>%</strong>
-        </p>
-        <p>
-            <span>🌡️ Temperature</span>
-            <strong><%= patient.vitals.temp %>°F</strong>
-        </p>
-    </div>
+    <!-- Main Content -->
+    <main class="flex flex-col items-center justify-center px-4 py-20 relative z-10">
+        <div
+            class="w-full max-w-2xl bg-white dark:bg-gray-900 shadow-2xl shadow-primary/5 squircle p-8 md:p-12 border border-white/40 dark:border-gray-800">
 
-    <div style="margin-top: 32px; display: flex; gap: 12px; justify-content: center;">
-        <form action="/delete-patient/<%= patient._id %>" method="POST" style="flex: 1;">
-            <button type="submit" class="delete-btn" style="width: 100%;" onclick="return confirm('Are you sure?')">Delete Patient</button>
-        </form>
-        <a href="/dashboard" class="back-btn" style="flex: 1; text-align: center; padding: 12px 24px;">Back to Dashboard</a>
-    </div>
-</div>
+            <!-- Header -->
+            <div class="text-center mb-10">
+                <div class="inline-flex items-center justify-center p-4 bg-primary rounded-2xl mb-4 shadow-lg">
+                    <span class="material-icons-round text-white text-3xl">person</span>
+                </div>
+                <h1
+                    class="font-display text-3xl md:text-4xl font-extrabold text-primary dark:text-slate-custom tracking-tight uppercase">
+                    <%= patient.name %>
+                </h1>
+
+                <div class="mt-4 flex justify-center">
+                    <% let statusColor="bg-green-100 text-green-800 border-green-200" ; let statusIcon="check_circle" ;
+                        if(patient.severity==='Red' ) { statusColor="bg-red-100 text-red-800 border-red-200" ;
+                        statusIcon="warning" ; } else if(patient.severity==='Amber' ) {
+                        statusColor="bg-amber-100 text-amber-800 border-amber-200" ; statusIcon="error_outline" ; } %>
+                        <span
+                            class="inline-flex items-center gap-2 px-4 py-2 rounded-full border <%= statusColor %> font-bold text-sm uppercase tracking-wide">
+                            <span class="material-icons-round text-lg">
+                                <%= statusIcon %>
+                            </span>
+                            Status: <%= patient.severity %>
+                        </span>
+                </div>
+            </div>
+
+            <div class="space-y-10">
+                <!-- Patient Information Section -->
+                <section>
+                    <div class="flex items-center gap-3 mb-6 border-b border-slate-100 dark:border-gray-800 pb-3">
+                        <span class="material-icons-round text-primary dark:text-champagne-custom">assignment_ind</span>
+                        <h2 class="text-lg font-bold text-primary dark:text-gray-200">Patient Profile</h2>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="info-card">
+                            <p class="text-xs font-bold text-primary/60 uppercase tracking-widest mb-1">Age</p>
+                            <p class="text-xl font-display font-bold text-primary">
+                                <%= patient.age %> Years
+                            </p>
+                        </div>
+
+                        <div class="info-card">
+                            <p class="text-xs font-bold text-primary/60 uppercase tracking-widest mb-1">Medical Category
+                            </p>
+                            <p class="text-xl font-display font-bold text-primary">
+                                <% const categoryMap={'1': 'Surgery' , '2' : 'Cardiac' , '3' : 'General' , '4'
+                                    : 'Emergency' , '5' : 'ICU' , '6' : 'Pediatrics' }; const
+                                    categoryIcons={'1': 'local_hospital' , '2' : 'favorite' , '3' : 'stethoscope' , '4'
+                                    : 'emergency' , '5' : 'monitor_heart' , '6' : 'child_care' }; %>
+                                    <span class="flex items-center gap-2">
+                                        <span class="material-icons-round text-lg">
+                                            <%= categoryIcons[patient.problemCode] || 'local_hospital' %>
+                                        </span>
+                                        <%= categoryMap[patient.problemCode] || 'General' %>
+                                    </span>
+                            </p>
+                        </div>
+
+                        <div class="info-card md:col-span-2">
+                            <p class="text-xs font-bold text-primary/60 uppercase tracking-widest mb-1">Admission Reason
+                            </p>
+                            <p class="text-lg font-medium text-primary">
+                                <%= patient.problem %>
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Vital Signs Section -->
+                <section>
+                    <div class="flex items-center gap-3 mb-6 border-b border-slate-100 dark:border-gray-800 pb-3">
+                        <span class="material-icons-round text-primary dark:text-champagne-custom">monitor_heart</span>
+                        <h2 class="text-lg font-bold text-primary dark:text-gray-200">Current Vitals</h2>
+                    </div>
+
+                    <div class="grid grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div class="info-card">
+                            <div class="flex justify-between items-start mb-2">
+                                <p class="text-xs font-bold text-primary/60 uppercase tracking-widest">Heart Rate</p>
+                                <span class="material-icons-round text-red-500">favorite</span>
+                            </div>
+                            <p class="text-2xl font-display font-bold text-primary">
+                                <%= patient.vitals.heartRate %> <span
+                                        class="text-sm font-body text-primary/50 font-medium">bpm</span>
+                            </p>
+                        </div>
+
+                        <div class="info-card">
+                            <div class="flex justify-between items-start mb-2">
+                                <p class="text-xs font-bold text-primary/60 uppercase tracking-widest">Oxygen</p>
+                                <span class="material-icons-round text-blue-500">air</span>
+                            </div>
+                            <p class="text-2xl font-display font-bold text-primary">
+                                <%= patient.vitals.oxygen %> <span
+                                        class="text-sm font-body text-primary/50 font-medium">%</span>
+                            </p>
+                        </div>
+
+                        <div class="info-card">
+                            <div class="flex justify-between items-start mb-2">
+                                <p class="text-xs font-bold text-primary/60 uppercase tracking-widest">Temp</p>
+                                <span class="material-icons-round text-orange-500">thermostat</span>
+                            </div>
+                            <p class="text-2xl font-display font-bold text-primary">
+                                <%= patient.vitals.temp %> <span
+                                        class="text-sm font-body text-primary/50 font-medium">°F</span>
+                            </p>
+                        </div>
+
+                        <div class="info-card">
+                            <div class="flex justify-between items-start mb-2">
+                                <p class="text-xs font-bold text-primary/60 uppercase tracking-widest">Resp. Rate</p>
+                                <span class="material-icons-round text-purple-500">medical_services</span>
+                            </div>
+                            <p class="text-2xl font-display font-bold text-primary">
+                                <%= patient.vitals.respiratoryRate %> <span
+                                        class="text-sm font-body text-primary/50 font-medium">rpm</span>
+                            </p>
+                        </div>
+
+                        <div class="info-card col-span-2 sm:col-span-1 lg:col-span-2">
+                            <div class="flex justify-between items-start mb-2">
+                                <p class="text-xs font-bold text-primary/60 uppercase tracking-widest">Blood Pressure
+                                </p>
+                                <span class="material-icons-round text-rose-500">bloodtype</span>
+                            </div>
+                            <p class="text-2xl font-display font-bold text-primary">
+                                <%= patient.vitals.systolicBP %> / <%= patient.vitals.diastolicBP %> <span
+                                            class="text-sm font-body text-primary/50 font-medium">mmHg</span>
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Actions -->
+                <div class="pt-6 flex flex-col gap-4">
+                    <form action="/delete-patient/<%= patient._id %>" method="POST" class="w-full">
+                        <button type="submit"
+                            class="w-full bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 font-bold py-4 rounded-full transition-all transform hover:-translate-y-1 active:scale-95 flex items-center justify-center gap-2"
+                            onclick="return confirm('Are you sure you want to discharge this patient? This action cannot be undone.')">
+                            <span>DISCHARGE PATIENT</span>
+                            <span class="material-icons-round">person_remove</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="mt-12 flex gap-8 items-center opacity-60">
+            <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-green-500"></span>
+                <span class="text-xs font-bold text-primary dark:text-white uppercase tracking-tighter">System
+                    Online</span>
+            </div>
+            <div class="h-4 w-px bg-slate-custom/30"></div>
+            <div class="text-xs font-bold text-primary dark:text-white uppercase tracking-tighter italic">V 2.0.4
+                Admission Portal</div>
+        </footer>
+    </main>
 
 </body>
+
 </html>
