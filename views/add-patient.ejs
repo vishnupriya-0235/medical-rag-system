@@ -51,6 +51,84 @@
             <option value="3">🩺 General</option>
         </select>
 
+        <!-- Vital Signs Section -->
+        <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #e0e0e0;">
+            <h3 style="color: #2c3e50; margin-bottom: 15px; font-size: 18px;">📊 Initial Vital Signs</h3>
+            
+            <label for="heartRate">Heart Rate (bpm)</label>
+            <input 
+                type="number" 
+                id="heartRate"
+                name="heartRate" 
+                placeholder="Normal: 60-100 bpm"
+                min="30"
+                max="200"
+                value="75"
+                required
+            >
+
+            <label for="oxygen">Oxygen Saturation (%)</label>
+            <input 
+                type="number" 
+                id="oxygen"
+                name="oxygen" 
+                placeholder="Normal: 95-100%"
+                min="70"
+                max="100"
+                value="98"
+                required
+            >
+
+            <label for="temp">Temperature (°F)</label>
+            <input 
+                type="number" 
+                id="temp"
+                name="temp" 
+                placeholder="Normal: 97-99°F"
+                min="95"
+                max="106"
+                step="0.1"
+                value="98.6"
+                required
+            >
+
+            <label for="respiratoryRate">Respiratory Rate (breaths/min)</label>
+            <input 
+                type="number" 
+                id="respiratoryRate"
+                name="respiratoryRate" 
+                placeholder="Normal: 12-20 breaths/min"
+                min="8"
+                max="40"
+                value="16"
+                required
+            >
+
+            <label for="systolicBP">Systolic Blood Pressure (mmHg)</label>
+            <input 
+                type="number" 
+                id="systolicBP"
+                name="systolicBP" 
+                placeholder="Normal: 90-120 mmHg"
+                min="60"
+                max="220"
+                value="120"
+                required
+            >
+
+            <label for="diastolicBP">Diastolic Blood Pressure (mmHg)</label>
+            <input 
+                type="number" 
+                id="diastolicBP"
+                name="diastolicBP" 
+                placeholder="Normal: 60-80 mmHg"
+                min="40"
+                max="140"
+                value="80"
+                required
+            >
+        </div>
+
         <button type="submit" class="submit-btn">Admit Patient</button>
     </form>
 
