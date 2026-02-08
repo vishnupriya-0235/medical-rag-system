@@ -1,145 +1,327 @@
 <!DOCTYPE html>
-<html lang="en">
+<html class="light" lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Medical RAG System</title>
-    <link rel="stylesheet" href="/css/style.css">
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Observation Monitor - Medical RAG System</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
     <script src="/socket.io/socket.io.js"></script>
+    <style type="text/tailwindcss">
+        :root {
+            --warm-beige: #F5F2EA;
+            --liquid-black: #000000;
+            --muted-red: #FEE2E2;
+            --muted-amber: #FEF3C7;
+            --muted-green: #DCFCE7;
+        }
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: var(--warm-beige);
+            color: var(--liquid-black);
+        }
+        .square-card {
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        .square-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.1);
+        }
+        .avatar-square {
+            border-radius: 4px;
+        }
+        .glass-header {
+            background: rgba(245, 242, 234, 0.95);
+            backdrop-filter: blur(10px);
+        }
+        .status-section {
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+        
+        /* Alert Overlay */
+        #alert-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        #alert-overlay.active {
+            display: flex;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
 </head>
 
-<body>
+<body class="min-h-screen">
 
-<nav class="navbar">
-    <h2>🏥 Observation Monitor</h2>
-
-    <div class="nav-right">
-        <input 
-            type="text" 
-            id="searchInput" 
-            onkeyup="searchPatient()" 
-            placeholder="🔍 Search patient..."
-        >
-        <a href="/add-patient" class="btn-add">➕ Add Patient</a>
-        <a href="/logout" class="logout-link">Logout</a>
+    <!-- ALERT SYSTEM -->
+    <div id="alert-overlay">
+        <h1 class="text-6xl font-black text-red-500 mb-6 uppercase tracking-tighter">⚠️ CRITICAL ALERT</h1>
+        <h2 id="alert-count" class="text-3xl font-bold text-white mb-8"></h2>
+        <div id="alert-list" class="text-white text-xl mb-12 max-w-2xl"></div>
+        <button
+            class="bg-white text-black px-12 py-4 rounded-sm font-black text-lg uppercase tracking-wider hover:bg-gray-200 transition-all active:scale-95"
+            onclick="acknowledgeAlerts()">
+            ACKNOWLEDGED
+        </button>
     </div>
-</nav>
 
-<!-- ALERT SYSTEM -->
-<div id="alert-overlay">
-    <h1 class="alert-title">⚠️ CRITICAL ALERT</h1>
-    <h2 id="alert-count"></h2>
-    <div id="alert-list"></div>
-    <button class="ack-button" onclick="acknowledgeAlerts()">ACKNOWLEDGED</button>
-</div>
-
-<div class="container">
-
-    <!-- CRITICAL PATIENTS -->
-    <h2 class="section-title red">🚨 CRITICAL CONDITION</h2>
-    <div class="grid">
-        <% critical.forEach(p=>{ %>
-        <a href="/patient/<%=p._id%>" class="card red-card">
-            <div class="avatar">🏥</div>
-            <h3><%=p.name%></h3>
-            <p><strong><%=p.problem%></strong></p>
-            <p style="font-size: 12px; margin-top: 8px; color: #999;">Click for details</p>
-        </a>
-        <% }) %>
-        <% if(critical.length === 0) { %>
-        <div style="grid-column: 1 / -1; text-align: center; padding: 40px 20px; color: var(--text-secondary);">
-            <p style="font-size: 18px;">✅ No critical patients at this time</p>
+    <!-- HEADER -->
+    <header
+        class="sticky top-0 z-50 px-12 py-6 glass-header flex items-center justify-between border-b border-black/10">
+        <div class="flex items-center gap-4">
+            <div class="w-10 h-10 bg-black flex items-center justify-center text-white rounded-sm">
+                <span class="material-symbols-outlined text-2xl">analytics</span>
+            </div>
+            <h1 class="text-2xl font-black tracking-tighter uppercase">Observation Monitor</h1>
         </div>
-        <% } %>
-    </div>
-
-    <!-- MODERATE PATIENTS -->
-    <h2 class="section-title amber">⚠️ MODERATE CONDITION</h2>
-    <div class="grid">
-        <% others.filter(p=>p.severity==='Amber').forEach(p=>{ %>
-        <a href="/patient/<%=p._id%>" class="card amber-card">
-            <div class="avatar">👤</div>
-            <h3><%=p.name%></h3>
-            <p><strong><%=p.problem%></strong></p>
-            <p style="font-size: 12px; margin-top: 8px; color: #999;">Click for details</p>
-        </a>
-        <% }) %>
-        <% if(others.filter(p=>p.severity==='Amber').length === 0) { %>
-        <div style="grid-column: 1 / -1; text-align: center; padding: 40px 20px; color: var(--text-secondary);">
-            <p style="font-size: 18px;">No moderate cases</p>
+        <div class="flex items-center gap-6">
+            <div class="relative">
+                <span
+                    class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-black text-xl">search</span>
+                <input id="searchInput" onkeyup="searchPatient()"
+                    class="pl-12 pr-6 py-3 bg-black/5 border border-black/5 rounded-sm w-80 focus:ring-1 focus:ring-black focus:bg-white transition-all outline-none placeholder-black/40 font-medium text-sm"
+                    placeholder="Search patients..." type="text" />
+            </div>
+            <a href="/add-patient"
+                class="bg-black text-white px-8 py-3 rounded-sm font-bold text-sm uppercase tracking-wider hover:bg-zinc-800 transition-all active:scale-95 shadow-lg shadow-black/10">
+                + Add Patient
+            </a>
+            <a href="/logout"
+                class="w-11 h-11 border border-black/10 flex items-center justify-center rounded-sm hover:bg-black hover:text-white transition-colors">
+                <span class="material-symbols-outlined text-xl">logout</span>
+            </a>
         </div>
-        <% } %>
-    </div>
+    </header>
 
-    <!-- STABLE PATIENTS -->
-    <h2 class="section-title green">✅ STABLE CONDITION</h2>
-    <div class="grid">
-        <% others.filter(p=>p.severity==='Green').forEach(p=>{ %>
-        <a href="/patient/<%=p._id%>" class="card green-card">
-            <div class="avatar">👤</div>
-            <h3><%=p.name%></h3>
-            <p><strong><%=p.problem%></strong></p>
-            <p style="font-size: 12px; margin-top: 8px; color: #999;">Click for details</p>
-        </a>
-        <% }) %>
-        <% if(others.filter(p=>p.severity==='Green').length === 0) { %>
-        <div style="grid-column: 1 / -1; text-align: center; padding: 40px 20px; color: var(--text-secondary);">
-            <p style="font-size: 18px;">No stable patients</p>
+    <!-- MAIN CONTENT -->
+    <main class="max-w-[1600px] mx-auto px-12 py-16 space-y-16">
+
+        <!-- CRITICAL SECTION -->
+        <section class="status-section bg-[var(--muted-red)] p-12 border border-black/5">
+            <div class="flex items-end justify-between mb-10">
+                <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-3xl font-bold">emergency_home</span>
+                    <h2 class="text-4xl font-black uppercase tracking-tighter">Critical</h2>
+                </div>
+                <p class="text-sm font-bold opacity-60 uppercase tracking-widest">
+                    <%= critical.length %> ACTIVE CASES
+                </p>
+            </div>
+
+            <% if(critical.length===0) { %>
+                <div class="flex items-center justify-center py-24 bg-white/40 border border-black/5 rounded-sm">
+                    <div class="text-center">
+                        <span class="material-symbols-outlined text-4xl mb-3 opacity-30">check_circle</span>
+                        <p class="text-xl font-black opacity-30 uppercase tracking-tighter">UNIT CLEAR</p>
+                    </div>
+                </div>
+                <% } else { %>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                        <% critical.forEach(p=> { %>
+                            <a href="/patient/<%= p._id %>"
+                                class="square-card bg-white p-10 border border-black/5 shadow-sm flex flex-col items-center text-center group cursor-pointer aspect-[3/4] justify-center">
+                                <div
+                                    class="w-20 h-20 bg-black/5 avatar-square flex items-center justify-center mb-8 overflow-hidden">
+                                    <span class="material-symbols-outlined text-4xl text-black/60">person</span>
+                                </div>
+                                <h3 class="text-2xl font-black mb-1 tracking-tight uppercase">
+                                    <%= p.name %>
+                                </h3>
+                                <p class="text-[10px] font-bold tracking-[0.2em] mb-8 text-black/50 uppercase">
+                                    <%= p.problem %>
+                                </p>
+                                <div class="w-12 h-[1px] bg-black/20 mb-8"></div>
+                                <div
+                                    class="flex items-center gap-2 font-black uppercase text-[10px] tracking-[0.2em] group-hover:gap-4 transition-all">
+                                    <span>VIEW BIO</span>
+                                    <span class="material-symbols-outlined text-xs font-bold">arrow_forward</span>
+                                </div>
+                            </a>
+                            <% }) %>
+                    </div>
+                    <% } %>
+        </section>
+
+        <!-- MODERATE SECTION -->
+        <section class="status-section bg-[var(--muted-amber)] p-12 border border-black/5">
+            <div class="flex items-end justify-between mb-10">
+                <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-3xl font-bold">warning</span>
+                    <h2 class="text-4xl font-black uppercase tracking-tighter">Moderate</h2>
+                </div>
+                <p class="text-sm font-bold opacity-60 uppercase tracking-widest">
+                    <%= others.filter(p=>p.severity==='Amber').length %> ACTIVE CASES
+                </p>
+            </div>
+
+            <% if(others.filter(p=>p.severity==='Amber').length === 0) { %>
+                <div class="flex items-center justify-center py-24 bg-white/40 border border-black/5 rounded-sm">
+                    <p class="text-xl font-black opacity-30 uppercase tracking-tighter italic">NO CASES UNDER
+                        OBSERVATION</p>
+                </div>
+                <% } else { %>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                        <% others.filter(p=>p.severity==='Amber').forEach(p => { %>
+                            <a href="/patient/<%= p._id %>"
+                                class="square-card bg-white p-10 border border-black/5 shadow-sm flex flex-col items-center text-center group cursor-pointer aspect-[3/4] justify-center">
+                                <div
+                                    class="w-20 h-20 bg-black/5 avatar-square flex items-center justify-center mb-8 overflow-hidden">
+                                    <span class="material-symbols-outlined text-4xl text-black/60">person</span>
+                                </div>
+                                <h3 class="text-2xl font-black mb-1 tracking-tight uppercase">
+                                    <%= p.name %>
+                                </h3>
+                                <p class="text-[10px] font-bold tracking-[0.2em] mb-8 text-black/50 uppercase">
+                                    <%= p.problem %>
+                                </p>
+                                <div class="w-12 h-[1px] bg-black/20 mb-8"></div>
+                                <div
+                                    class="flex items-center gap-2 font-black uppercase text-[10px] tracking-[0.2em] group-hover:gap-4 transition-all">
+                                    <span>VIEW BIO</span>
+                                    <span class="material-symbols-outlined text-xs font-bold">arrow_forward</span>
+                                </div>
+                            </a>
+                            <% }) %>
+                    </div>
+                    <% } %>
+        </section>
+
+        <!-- STABLE SECTION -->
+        <section class="status-section bg-[var(--muted-green)] p-12 border border-black/5">
+            <div class="flex items-end justify-between mb-10">
+                <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-3xl font-bold">shield</span>
+                    <h2 class="text-4xl font-black uppercase tracking-tighter">Stable</h2>
+                </div>
+                <p class="text-sm font-bold opacity-60 uppercase tracking-widest">
+                    <%= others.filter(p=>p.severity==='Green').length %> ACTIVE CASES
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <% others.filter(p=>p.severity==='Green').forEach(p => { %>
+                    <a href="/patient/<%= p._id %>"
+                        class="square-card bg-white p-10 border border-black/5 shadow-sm flex flex-col items-center text-center group cursor-pointer aspect-[3/4] justify-center">
+                        <div
+                            class="w-20 h-20 bg-black/5 avatar-square flex items-center justify-center mb-8 overflow-hidden">
+                            <span class="material-symbols-outlined text-4xl text-black/60">person</span>
+                        </div>
+                        <h3 class="text-2xl font-black mb-1 tracking-tight uppercase">
+                            <%= p.name %>
+                        </h3>
+                        <p class="text-[10px] font-bold tracking-[0.2em] mb-8 text-black/50 uppercase">
+                            <%= p.problem %>
+                        </p>
+                        <div class="w-12 h-[1px] bg-black/20 mb-8"></div>
+                        <div
+                            class="flex items-center gap-2 font-black uppercase text-[10px] tracking-[0.2em] group-hover:gap-4 transition-all">
+                            <span>VIEW BIO</span>
+                            <span class="material-symbols-outlined text-xs font-bold">arrow_forward</span>
+                        </div>
+                    </a>
+                    <% }) %>
+
+                        <!-- ADD NEW CARD -->
+                        <a href="/add-patient"
+                            class="square-card border-2 border-dashed border-black/20 bg-white/40 flex flex-col items-center justify-center p-10 group hover:border-black/40 transition-all cursor-pointer aspect-[3/4]">
+                            <div
+                                class="w-16 h-16 bg-black text-white rounded-sm flex items-center justify-center mb-6 group-hover:scale-105 transition-transform">
+                                <span class="material-symbols-outlined text-3xl font-bold">add</span>
+                            </div>
+                            <p class="font-black uppercase tracking-[0.2em] text-[10px] text-black/60">ADD NEW</p>
+                        </a>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="p-12 flex justify-center">
+        <div
+            class="bg-black text-white px-8 py-4 rounded-sm flex items-center gap-4 text-[10px] font-bold tracking-[0.2em] uppercase shadow-xl">
+            <span class="material-symbols-outlined text-lg">verified_user</span>
+            SECURED SYSTEM NODE 402
         </div>
-        <% } %>
-    </div>
+    </footer>
 
-</div>
+    <script>
+        const socket = io();
+        let criticalList = [];
+        let alarmInterval;
 
-<script>
-const socket = io();
-let criticalList = [];
-let alarmInterval;
-
-// Search functionality
-function searchPatient() {
-    const val = document.getElementById('searchInput').value.toLowerCase();
-    document.querySelectorAll('.card').forEach(c => {
-        c.style.display = c.innerText.toLowerCase().includes(val) ? "" : "none";
-    });
-}
-
-// Alert system
-socket.on('emergency_alert', data => {
-    if (!criticalList.find(p => p.id === data.id)) {
-        criticalList.push(data);
-        document.getElementById('alert-overlay').style.display = 'flex';
-        document.getElementById('alert-count').innerText = `${criticalList.length} CRITICAL PATIENT(S)`;
-        document.getElementById('alert-list').innerHTML = 
-            criticalList.map(p => `<p><strong>${p.name}</strong> - HR: ${p.hr} | O2: ${p.o2}%</p>`).join('');
-        if (!alarmInterval) {
-            alarmInterval = setInterval(playAlarm, 1000);
+        // Search functionality
+        function searchPatient() {
+            const val = document.getElementById('searchInput').value.toLowerCase();
+            document.querySelectorAll('.square-card').forEach(c => {
+                if (c.href && c.href.includes('/patient/')) {
+                    c.style.display = c.innerText.toLowerCase().includes(val) ? "" : "none";
+                }
+            });
         }
-    }
-});
 
-function acknowledgeAlerts() {
-    criticalList = [];
-    clearInterval(alarmInterval);
-    alarmInterval = null;
-    document.getElementById('alert-overlay').style.display = 'none';
-}
+        // Alert system
+        socket.on('emergency_alert', data => {
+            if (!criticalList.find(p => p.id === data.id)) {
+                criticalList.push(data);
+                const overlay = document.getElementById('alert-overlay');
+                overlay.classList.add('active');
+                overlay.style.display = 'flex';
+                document.getElementById('alert-count').innerText = `${criticalList.length} CRITICAL PATIENT(S)`;
+                document.getElementById('alert-list').innerHTML =
+                    criticalList.map(p => `<p class="mb-2"><strong>${p.name}</strong> - HR: ${p.hr} | O2: ${p.o2}%</p>`).join('');
+                if (!alarmInterval) {
+                    alarmInterval = setInterval(playAlarm, 1000);
+                }
+            }
+        });
 
-function playAlarm() {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.frequency.value = 880;
-    gain.gain.value = 0.05;
-    osc.start();
-    osc.stop(ctx.currentTime + 0.3);
-}
+        function acknowledgeAlerts() {
+            criticalList = [];
+            clearInterval(alarmInterval);
+            alarmInterval = null;
+            const overlay = document.getElementById('alert-overlay');
+            overlay.classList.remove('active');
+            overlay.style.display = 'none';
+        }
 
-// Auto-update dashboard
-socket.on('update_data', () => location.reload());
-</script>
+        function playAlarm() {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.frequency.value = 880;
+            gain.gain.value = 0.05;
+            osc.start();
+            osc.stop(ctx.currentTime + 0.3);
+        }
+
+        // Auto-update dashboard
+        socket.on('update_data', () => location.reload());
+    </script>
 
 </body>
+
 </html>
