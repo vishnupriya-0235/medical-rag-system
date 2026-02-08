@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,144 +10,76 @@
 
 <body class="add-patient-body">
 
-<div class="form-card">
-    <h2>➕ Add New Patient</h2>
+    <div class="form-card">
+        <h2>➕ Add New Patient</h2>
 
-    <form action="/add-patient" method="POST" onsubmit="return validateForm()">
-        
-        <label for="name">Patient Name</label>
-        <input 
-            type="text" 
-            id="name"
-            name="name" 
-            placeholder="Full name" 
-            required
-        >
+        <form action="/add-patient" method="POST" onsubmit="return validateForm()">
 
-        <label for="age">Age</label>
-        <input 
-            type="number" 
-            id="age"
-            name="age" 
-            placeholder="Patient age"
-            min="0"
-            max="150"
-            required
-        >
+            <label for="name">Patient Name</label>
+            <input type="text" id="name" name="name" placeholder="Full name" required>
 
-        <label for="problem">Admission Reason</label>
-        <input 
-            type="text" 
-            id="problem"
-            name="problem" 
-            placeholder="Chief complaint or diagnosis"
-            required
-        >
+            <label for="age">Age</label>
+            <input type="number" id="age" name="age" placeholder="Patient age" min="0" max="150" required>
 
-        <label for="problemCode">Medical Category</label>
-        <select id="problemCode" name="problemCode" required>
-            <option value="">-- Select Category --</option>
-            <option value="1">🏥 Surgery</option>
-            <option value="2">❤️ Cardiac</option>
-            <option value="3">🩺 General</option>
-        </select>
+            <label for="problem">Admission Reason</label>
+            <input type="text" id="problem" name="problem" placeholder="Chief complaint or diagnosis" required>
 
-        <!-- Vital Signs Section -->
-        <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #e0e0e0;">
-            <h3 style="color: #2c3e50; margin-bottom: 15px; font-size: 18px;">📊 Initial Vital Signs</h3>
-            
-            <label for="heartRate">Heart Rate (bpm)</label>
-            <input 
-                type="number" 
-                id="heartRate"
-                name="heartRate" 
-                placeholder="Normal: 60-100 bpm"
-                min="30"
-                max="200"
-                value="75"
-                required
-            >
+            <label for="problemCode">Medical Category</label>
+            <select id="problemCode" name="problemCode" required>
+                <option value="">-- Select Category --</option>
+                <option value="1">🏥 Surgery</option>
+                <option value="2">❤️ Cardiac</option>
+                <option value="3">🩺 General</option>
+            </select>
 
-            <label for="oxygen">Oxygen Saturation (%)</label>
-            <input 
-                type="number" 
-                id="oxygen"
-                name="oxygen" 
-                placeholder="Normal: 95-100%"
-                min="70"
-                max="100"
-                value="98"
-                required
-            >
+            <!-- Vital Signs Section -->
+            <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #e0e0e0;">
+                <h3 style="color: #2c3e50; margin-bottom: 15px; font-size: 18px;">📊 Initial Vital Signs</h3>
 
-            <label for="temp">Temperature (°F)</label>
-            <input 
-                type="number" 
-                id="temp"
-                name="temp" 
-                placeholder="Normal: 97-99°F"
-                min="95"
-                max="106"
-                step="0.1"
-                value="98.6"
-                required
-            >
+                <label for="heartRate">Heart Rate (bpm)</label>
+                <input type="number" id="heartRate" name="heartRate" placeholder="Normal: 60-100 bpm" min="30" max="200"
+                    required>
 
-            <label for="respiratoryRate">Respiratory Rate (breaths/min)</label>
-            <input 
-                type="number" 
-                id="respiratoryRate"
-                name="respiratoryRate" 
-                placeholder="Normal: 12-20 breaths/min"
-                min="8"
-                max="40"
-                value="16"
-                required
-            >
+                <label for="oxygen">Oxygen Saturation (%)</label>
+                <input type="number" id="oxygen" name="oxygen" placeholder="Normal: 95-100%" min="70" max="100"
+                    required>
 
-            <label for="systolicBP">Systolic Blood Pressure (mmHg)</label>
-            <input 
-                type="number" 
-                id="systolicBP"
-                name="systolicBP" 
-                placeholder="Normal: 90-120 mmHg"
-                min="60"
-                max="220"
-                value="120"
-                required
-            >
+                <label for="temp">Temperature (°F)</label>
+                <input type="number" id="temp" name="temp" placeholder="Normal: 97-99°F" min="95" max="106" step="0.1"
+                    required>
 
-            <label for="diastolicBP">Diastolic Blood Pressure (mmHg)</label>
-            <input 
-                type="number" 
-                id="diastolicBP"
-                name="diastolicBP" 
-                placeholder="Normal: 60-80 mmHg"
-                min="40"
-                max="140"
-                value="80"
-                required
-            >
+                <label for="respiratoryRate">Respiratory Rate (breaths/min)</label>
+                <input type="number" id="respiratoryRate" name="respiratoryRate" placeholder="Normal: 12-20 breaths/min"
+                    min="8" max="40" required>
+
+                <label for="systolicBP">Systolic Blood Pressure (mmHg)</label>
+                <input type="number" id="systolicBP" name="systolicBP" placeholder="Normal: 90-120 mmHg" min="60"
+                    max="220" required>
+
+                <label for="diastolicBP">Diastolic Blood Pressure (mmHg)</label>
+                <input type="number" id="diastolicBP" name="diastolicBP" placeholder="Normal: 60-80 mmHg" min="40"
+                    max="140" required>
+            </div>
+
+            <button type="submit" class="submit-btn">Admit Patient</button>
+        </form>
+
+        <div style="margin-top: 20px; text-align: center;">
+            <a href="/dashboard" style="color: var(--text-secondary); font-size: 14px;">Back to Dashboard</a>
         </div>
-
-        <button type="submit" class="submit-btn">Admit Patient</button>
-    </form>
-
-    <div style="margin-top: 20px; text-align: center;">
-        <a href="/dashboard" style="color: var(--text-secondary); font-size: 14px;">Back to Dashboard</a>
     </div>
-</div>
 
-<script>
-function validateForm() {
-    const age = document.getElementById('age').value;
-    if (age < 0 || age > 150) {
-        alert('Please enter a valid age');
-        return false;
-    }
-    return true;
-}
-</script>
+    <script>
+        function validateForm() {
+            const age = document.getElementById('age').value;
+            if (age < 0 || age > 150) {
+                alert('Please enter a valid age');
+                return false;
+            }
+            return true;
+        }
+    </script>
 
 </body>
+
 </html>
