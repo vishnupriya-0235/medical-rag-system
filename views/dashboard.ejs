@@ -192,11 +192,11 @@
     </header>
 
     <!-- MAIN CONTENT -->
-    <main class="max-w-[1600px] mx-auto px-12 py-16 space-y-16">
+    <main class="max-w-[1600px] mx-auto px-12 py-12 space-y-8">
 
         <!-- CRITICAL SECTION -->
-        <section class="status-section bg-[var(--muted-red)] p-12 border border-black/5 animate-section-1">
-            <div class="flex items-end justify-between mb-10">
+        <section class="status-section bg-[var(--muted-red)] p-8 border border-black/5 animate-section-1">
+            <div class="flex items-end justify-between mb-6">
                 <div class="flex items-center gap-3">
                     <span class="material-symbols-outlined text-3xl font-bold">emergency_home</span>
                     <h2 class="text-4xl font-black uppercase tracking-tighter">Critical</h2>
@@ -207,7 +207,7 @@
             </div>
 
             <% if(critical.length===0) { %>
-                <div class="flex items-center justify-center py-24 bg-white/40 border border-black/5 rounded-xl">
+                <div class="flex items-center justify-center py-16 bg-white/40 border border-black/5 rounded-xl">
                     <div class="text-center">
                         <span class="material-symbols-outlined text-4xl mb-3 opacity-30">check_circle</span>
                         <p class="text-xl font-black opacity-30 uppercase tracking-tighter">UNIT CLEAR</p>
@@ -241,8 +241,8 @@
         </section>
 
         <!-- MODERATE SECTION -->
-        <section class="status-section bg-[var(--muted-amber)] p-12 border border-black/5 animate-section-2">
-            <div class="flex items-end justify-between mb-10">
+        <section class="status-section bg-[var(--muted-amber)] p-8 border border-black/5 animate-section-2">
+            <div class="flex items-end justify-between mb-6">
                 <div class="flex items-center gap-3">
                     <span class="material-symbols-outlined text-3xl font-bold">warning</span>
                     <h2 class="text-4xl font-black uppercase tracking-tighter">Moderate</h2>
@@ -253,7 +253,7 @@
             </div>
 
             <% if(others.filter(p=>p.severity==='Amber').length === 0) { %>
-                <div class="flex items-center justify-center py-24 bg-white/40 border border-black/5 rounded-xl">
+                <div class="flex items-center justify-center py-16 bg-white/40 border border-black/5 rounded-xl">
                     <p class="text-xl font-black opacity-30 uppercase tracking-tighter italic">NO CASES UNDER
                         OBSERVATION</p>
                 </div>
@@ -285,8 +285,8 @@
         </section>
 
         <!-- STABLE SECTION -->
-        <section class="status-section bg-[var(--muted-green)] p-12 border border-black/5 animate-section-3">
-            <div class="flex items-end justify-between mb-10">
+        <section class="status-section bg-[var(--muted-green)] p-8 border border-black/5 animate-section-3">
+            <div class="flex items-end justify-between mb-6">
                 <div class="flex items-center gap-3">
                     <span class="material-symbols-outlined text-3xl font-bold">shield</span>
                     <h2 class="text-4xl font-black uppercase tracking-tighter">Stable</h2>
