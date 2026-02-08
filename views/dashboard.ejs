@@ -352,11 +352,26 @@
         function searchPatient() {
             const val = document.getElementById('searchInput').value.toLowerCase();
             document.querySelectorAll('.square-card').forEach(c => {
-                if (c.href && c.href.includes('/patient/')) {
-                    c.style.display = c.innerText.toLowerCase().includes(val) ? "" : "none";
+                const nameEl = c.querySelector('h3');
+                if (nameEl) {
+                    const name = nameEl.innerText.toLowerCase();
+                    if (c.href && c.href.includes('/patient/')) {
+                        c.style.display = name.includes(val) ? "" : "none";
+                    }
                 }
             });
         }
+
+        document.getElementById('searchInput').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const visibleCards = Array.from(document.querySelectorAll('.square-card'))
+                    .filter(c => c.style.display !== 'none');
+
+                if (visibleCards.length > 0) {
+                    window.location.href = visibleCards[0].href;
+                }
+            }
+        });
 
         // Alert system
         socket.on('emergency_alert', data => {
